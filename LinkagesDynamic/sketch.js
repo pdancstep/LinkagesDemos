@@ -298,9 +298,6 @@ function bind3(){
 
 
 
-
-//index of stack currently under consideration in myBindings
-var bindingIndex
 //index of dependent node in stack in myBindings[n].myStack
 var dependentNodeIndex
 //index of operator containing dependent node
@@ -315,11 +312,16 @@ function freeNodeSearch(node){
   }else{
     
     //1. Determine which stack the node is in
+    var bindingIndex = -1
     for(a=0;a<myBindings.length;a++){
     	if(myBindings[a].myStack.includes(node)){
-    		bindingIndex = a 
+    		if(bindingIndex>=0){
+    				//error message
+    		}
+    		bindingIndex = a
     	}
     }
+    //Check if bindinIndex is less than zero -> error
     
     //2. Figure out if that stack is free
     if(myBindings[bindingIndex].free){
