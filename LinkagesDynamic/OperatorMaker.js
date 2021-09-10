@@ -13,25 +13,24 @@ function MakeOperator(type) {
 	
     }else if(type==1){
 	
-	this.myInput1 = new MakeNumber(50,0,true)
-	this.myInput2 = new MakeNumber(50,0,true)
+	this.myInput1 = new MakeNumber(1,0,true)
+	this.myInput2 = new MakeNumber(1,0,true)
 	
-	this.myOutput = new MakeNumber(50,0,false)
-	
+	this.myOutput = new MakeNumber(1,0,false)
     }
     
     //mode booleans for backdriving input 1 and input 2
     this.reverseMode1 = false
     this.reverseMode2 = false
     
-    //boolean that reports if one of it's inputs is being dragged
+    //boolean that reports if one of its inputs is being dragged
     this.dragging = false
     
     //boolean marking that this operator is in the process of being reversed
     this.beingReversed = false
     
     
-    //booleans for collapsed operator and its' forward/backward kinematics...
+    //booleans for collapsed operator and its forward/backward kinematics...
     this.collapsed = false
     this.reverseCollapsed = false
     
@@ -43,7 +42,6 @@ function MakeOperator(type) {
 	this.myOutput.overMe()
     }
     
-    
     //checks to see if mouse is over any nodes
     this.clickMe = function(){
 	
@@ -54,11 +52,12 @@ function MakeOperator(type) {
 	}
 	this.myOutput.clickMe()
 	
-	if(this.myInput1.dragging||this.myInput2.dragging||this.myOutput.dragging){
+	if (this.myInput1.dragging || this.myInput2.dragging || this.myOutput.dragging){
 	    this.dragging = true
 	}	
     }
-    
+
+    // ???
     this.allFalse = function(){
 	this.myInput1.dragging = false
 	this.myInput2.dragging = false
@@ -74,8 +73,8 @@ function MakeOperator(type) {
 	//Right now activates mode-switch chooser, and reversals are handled by a function at the sketch level...
 	if(!this.collapsed){
 	    
-	    
-	    if(this.myInput1.over&&!this.myInput1.free&&!this.myInput1.inStack){
+	    // want to give control to input 1, which is currently bound and not stacked
+	    if (this.myInput1.over && !this.myInput1.free && !this.myInput1.inStack){
 		
 		//top level reversal boolean
 		reversingOperator = true
@@ -86,8 +85,9 @@ function MakeOperator(type) {
 		freeNodeSearch(this.myOutput)
 		
 	    }
-	    
-	    if(this.myInput2.over&&!this.myInput2.free&&!this.myInput2.inStack){
+
+	    // want to give control to input 2, which is currently bound and not stacked
+	    if (this.myInput2.over && !this.myInput2.free && !this.myInput2.inStack){
 		
 		//top level reversal boolean
 		reversingOperator = true
@@ -99,8 +99,8 @@ function MakeOperator(type) {
 		
 	    }
 	    
-	    
-	    if(this.myOutput.over&&!this.myOutput.free&&!this.myOutput.inStack){
+	    // want to give control to output, which is currently bound and not stacked
+	    if(this.myOutput.over && !this.myOutput.free && !this.myOutput.inStack){
 		
 		//top level reversal boolean
 		reversingOperator = true
@@ -116,7 +116,7 @@ function MakeOperator(type) {
 	}else{
 	    
 	    //double click on input1
-	    if(this.myInput1.over&&!this.myInput1.free){
+	    if (this.myInput1.over && !this.myInput1.free){
 		
 		//make input1 dependent
 		this.myInput1.free = true
@@ -130,7 +130,7 @@ function MakeOperator(type) {
 	    }
 	    
 	    //double click on output
-	    if(this.myOutput.over&&!this.myOutput.free){
+	    if (this.myOutput.over && !this.myOutput.free){
 		
 		//make output dependent
 		this.myOutput.free = true
@@ -146,7 +146,7 @@ function MakeOperator(type) {
     this.update = function(){
 	
 	//check if this operator is being collapsed via press-and-hold...
-	if(this.myInput1.over&&this.myInput2.over){
+	if(this.myInput1.over && this.myInput2.over){
 	    if(pressAndHold){
 		if((millis()-timerStart)>holdLength){
 		    indicatorFlash = true
@@ -163,16 +163,17 @@ function MakeOperator(type) {
 	this.myInput2.update()
 	this.myOutput.update()
 	
-	for(i=0;i<iterations;i++){
-	    if(type==0){
+	for (i=0; i<iterations; i++){
+	    if (type==0){
 		this.propagateOutputSum()
-	    }else if(type==1){
+	    }else if (type==1){
 		this.propagateOutputProd()
 	    }
 	}	
     }
     
-    //compares nearby points to see if its profitable to move in a given direction, and determines the appropriate shift...
+    //compares nearby points to see if its profitable to move in a given direction,
+    // and determines the appropriate shift...
     this.compareShifts = function(){
 	if(abs(leftX)<abs(rightX)){
 	    shiftX = shiftX - 1
@@ -191,72 +192,70 @@ function MakeOperator(type) {
 	//assume no shifting
 	shiftX=0
 	shiftY=0
-	
+
+	var r1 = this.myInput1.getRealGlobal();
+	var i1 = this.myInput1.getImaginaryGlobal();
+	var r2 = this.myInput2.getRealGlobal();
+	var i2 = this.myInput2.getImaginaryGlobal();
+	var rout = this.myOutput.getRealGlobal();
+	var iout = this.myOutput.getImaginaryGlobal();
+		
 	//for uncollapsed operator
-	if(!this.collapsed){
+	if (!this.collapsed){
 	    
-	    if(!this.reverseMode1&&!this.reverseMode2){
+	    if (!this.reverseMode1 && !this.reverseMode2){
 		
 		//check whether moving left or right gives a better fit to constraints...
-		leftX = (this.myOutput.real-searchSize)-(this.myInput1.real+this.myInput2.real)
-		rightX = (this.myOutput.real+searchSize)-(this.myInput1.real+this.myInput2.real)
+		leftX = (rout - searchSize) - (r1 + r2)
+		rightX = (rout + searchSize) - (r1 + r2)
 		
 		//...same for up or down movement...
-		upperY = (this.myOutput.imaginary+searchSize)-(this.myInput1.imaginary+this.myInput2.imaginary)
-		lowerY = (this.myOutput.imaginary-searchSize)-(this.myInput1.imaginary+this.myInput2.imaginary)
+		upperY = (iout + searchSize) - (i1 + i2)
+		lowerY = (iout - searchSize) - (i1 + i2)
 		
 		//decide whether/where to shift ouput position...
-		this.compareShifts()
-		this.myOutput.real = this.myOutput.real+shiftX
-		this.myOutput.imaginary = this.myOutput.imaginary+shiftY
+		this.compareShifts();
+		this.myOutput.addGlobal(shiftX, shiftY);
 		
-	    }else if(this.reverseMode1){
+	    }else if (this.reverseMode1){
+		leftX = (r1 - searchSize) - (rout - r2);
+		rightX = (r1 + searchSize) - (rout - r2);
+		upperY = (i1 + searchSize) - (iout - i2);
+		lowerY = (i1 - searchSize) - (iout - i2)
 		
-		leftX = (this.myInput1.real-searchSize)-(this.myOutput.real-this.myInput2.real)
-		rightX = (this.myInput1.real+searchSize)-(this.myOutput.real-this.myInput2.real)
-		upperY = (this.myInput1.imaginary+searchSize)-(this.myOutput.imaginary-this.myInput2.imaginary)
-		lowerY = (this.myInput1.imaginary-searchSize)-(this.myOutput.imaginary-this.myInput2.imaginary)
-		
-		this.compareShifts()
-		this.myInput1.real = this.myInput1.real+shiftX
-		this.myInput1.imaginary = this.myInput1.imaginary+shiftY
+		this.compareShifts();
+		this.myInput1.addGlobal(shiftX, shiftY);
 		
 	    }else if(this.reverseMode2){
+		leftX = (r2 - searchSize) - (rout - r1);
+		rightX = (r2 + searchSize) - (rout - r1);
+		upperY = (i2 + searchSize) - (iout - i1);
+		lowerY = (i2 - searchSize) - (iout - i1);
 		
-		leftX = (this.myInput2.real-searchSize)-(this.myOutput.real-this.myInput1.real)
-		rightX = (this.myInput2.real+searchSize)-(this.myOutput.real-this.myInput1.real)
-		upperY = (this.myInput2.imaginary+searchSize)-(this.myOutput.imaginary-this.myInput1.imaginary)
-		lowerY = (this.myInput2.imaginary-searchSize)-(this.myOutput.imaginary-this.myInput1.imaginary)
-		
-		this.compareShifts()
-		this.myInput2.real = this.myInput2.real+shiftX
-		this.myInput2.imaginary = this.myInput2.imaginary+shiftY
+		this.compareShifts();
+		this.myInput2.addGlobal(shiftX, shiftY);
 	    }
 	    
 	    //for collapsed operator
 	}else{
 	    
 	    if(!this.reverseCollapsed){
+		leftX = (rout - searchSize) - (r1 * 2);
+		rightX = (rout + searchSize) - (r1 * 2);
+		upperY = (iout + searchSize) - (i1 * 2);
+		lowerY = (iout - searchSize) - (i1 * 2);
 		
-		leftX = (this.myOutput.real-searchSize)-(2*this.myInput1.real)
-		rightX = (this.myOutput.real+searchSize)-(2*this.myInput1.real)
-		upperY = (this.myOutput.imaginary+searchSize)-(2*this.myInput1.imaginary)
-		lowerY = (this.myOutput.imaginary-searchSize)-(2*this.myInput1.imaginary)
-		
-		this.compareShifts()
-		this.myOutput.real = this.myOutput.real+shiftX
-		this.myOutput.imaginary = this.myOutput.imaginary+shiftY
+		this.compareShifts();
+		this.myOutput.addGlobal(shiftX, shiftY);
 		
 	    }else{
+		leftX = (r1 - searchSize) - (rout / 2);
+		rightX = (r1 + searchSize) - (rout / 2);
+		upperY = (i1 + searchSize) - (iout / 2);
+		lowerY = (i1 - searchSize) - (iout / 2);
 		
-		leftX = (this.myInput1.real-searchSize)-(.5*this.myOutput.real)
-		rightX = (this.myInput1.real+searchSize)-(.5*this.myOutput.real)
-		upperY = (this.myInput1.imaginary+searchSize)-(.5*this.myOutput.imaginary)
-		lowerY = (this.myInput1.imaginary-searchSize)-(.5*this.myOutput.imaginary)
-		
-		this.compareShifts()
-		this.myInput1.real = this.myInput1.real+shiftX
-		this.myInput1.imaginary = this.myInput1.imaginary+shiftY
+		this.compareShifts();
+		this.myInput1.addGlobal(shiftX, shiftY);
 	    }   
 	}
     }
@@ -265,86 +264,99 @@ function MakeOperator(type) {
 	//assume no shifting
 	shiftX=0
 	shiftY=0
-	
+
+	var r1 = this.myInput1.getRealGlobal();
+	var i1 = this.myInput1.getImaginaryGlobal();
+	var r2 = this.myInput2.getRealGlobal();
+	var i2 = this.myInput2.getImaginaryGlobal();
+	var rout = this.myOutput.getRealGlobal();
+	var iout = this.myOutput.getImaginaryGlobal();
+	var rprod = (r1 * r2) - (i1 * i2);
+	var iprod = (r1 * i2) + (i1 * r2);
 	
 	//for uncollapsed operator
 	if(!this.collapsed){
 	    
 	    if(!this.reverseMode1&&!this.reverseMode2){
+
 		
 		//check whether moving left or right gives a better fit to constraints...
-		leftX = (this.myOutput.real-searchSize)-((this.myInput1.real*this.myInput2.real)-(this.myInput1.imaginary*this.myInput2.imaginary))/50
-		rightX = (this.myOutput.real+searchSize)-((this.myInput1.real*this.myInput2.real)-(this.myInput1.imaginary*this.myInput2.imaginary))/50
+		leftX = (rout - searchSize) - rprod/50;
+		rightX = (rout + searchSize) - rprod/50;
 		
 		//...same for up or down movement...
-		upperY = (this.myOutput.imaginary+searchSize)-((this.myInput1.real*this.myInput2.imaginary)+(this.myInput1.imaginary*this.myInput2.real))/50
-		lowerY = (this.myOutput.imaginary-searchSize)-((this.myInput1.real*this.myInput2.imaginary)+(this.myInput1.imaginary*this.myInput2.real))/50
+		upperY = (iout + searchSize) - iprod/50;
+		lowerY = (iout - searchSize) - iprod/50;
 		
 		//decide whether/where to shift ouput position...
-		this.compareShifts()
-		this.myOutput.real = this.myOutput.real+shiftX
-		this.myOutput.imaginary = this.myOutput.imaginary+shiftY
+		this.compareShifts();
+		this.myOutput.addGlobal(shiftX, shiftY);
 		
 	    }else if(this.reverseMode1){
 		
-		denominator = ((this.myInput2.real*this.myInput2.real)+(this.myInput2.imaginary*this.myInput2.imaginary))/50
+		var denominator = ((r2*r2) + (i2 * i2))/50;
+		var rquot = ((rout * r2) + (iout * i2)) / denominator;
+		var iquot = ((iout * r2) - (rout * i2)) / denominator;
 		
-		leftX = (this.myInput1.real-searchSize)-(((this.myOutput.real*this.myInput2.real)+(this.myOutput.imaginary*this.myInput2.imaginary))/denominator)
-		rightX = (this.myInput1.real+searchSize)-(((this.myOutput.real*this.myInput2.real)+(this.myOutput.imaginary*this.myInput2.imaginary))/denominator)
-		upperY = (this.myInput1.imaginary+searchSize)-(((this.myOutput.imaginary*this.myInput2.real)-(this.myOutput.real*this.myInput2.imaginary))/denominator)
-		lowerY = (this.myInput1.imaginary-searchSize)-(((this.myOutput.imaginary*this.myInput2.real)-(this.myOutput.real*this.myInput2.imaginary))/denominator)
+		leftX = (r1 - searchSize) - rqout;
+		rightX = (r1 + searchSize) - rquot;
+		upperY = (i1 + searchSize) - iquot;
+		lowerY = (i1 - searchSize) - iquot;
 		
-		this.compareShifts()
-		this.myInput1.real = this.myInput1.real+shiftX
-		this.myInput1.imaginary = this.myInput1.imaginary+shiftY
+		this.compareShifts();
+		this.myInput1.addGlobal(shiftX, shiftY);
 		
 	    }else if(this.reverseMode2){
 		
-		denominator = ((this.myInput1.real*this.myInput1.real)+(this.myInput1.imaginary*this.myInput1.imaginary))/50
+		var denominator = ((r1 * r1) + (i1 * i1))/50;
+		var rquot = ((rout * r1) + (iout * i1)) / denominator;
+		var iquot = ((iout * r1) - (rout * i1)) / denominator;
 		
-		leftX = (this.myInput2.real-searchSize)-(((this.myOutput.real*this.myInput1.real)+(this.myOutput.imaginary*this.myInput1.imaginary))/denominator)
-		rightX = (this.myInput2.real+searchSize)-(((this.myOutput.real*this.myInput1.real)+(this.myOutput.imaginary*this.myInput1.imaginary))/denominator)
-		upperY = (this.myInput2.imaginary+searchSize)-(((this.myOutput.imaginary*this.myInput1.real)-(this.myOutput.real*this.myInput1.imaginary))/denominator)
-		lowerY = (this.myInput2.imaginary-searchSize)-(((this.myOutput.imaginary*this.myInput1.real)-(this.myOutput.real*this.myInput1.imaginary))/denominator)
+		leftX = (r2 - searchSize) - rquot;
+		rightX = (r2 + searchSize) - rquot;
+		upperY = (i2 + searchSize) - iquot;
+		lowerY = (i2 - searchSize) - iquot;
 		
-		this.compareShifts()
-		this.myInput2.real = this.myInput2.real+shiftX
-		this.myInput2.imaginary = this.myInput2.imaginary+shiftY
+		this.compareShifts();
+		this.myInput2.addGlobal(shiftX, shiftY);
 	    }
 	    
 	    //for collapsed operator
 	}else{
 	    if(!this.reverseCollapsed){
+		// note: previously this section recalculated everything in terms of only Input1,
+		// but since both inputs should have the same coordinates,
+		// I'm just using the product we already calculated -J
+		leftX = (rout - searchSize) - rprod/50;
+		rightX = (rout + searchSize) - rprod/50;
+		upperY = (iout + searchSize) - iprod/50;
+		lowerY = (iout - searchSize) - iprod/50;
 		
-		leftX = (this.myOutput.real-searchSize)-(this.myInput1.real*this.myInput1.real-this.myInput1.imaginary*this.myInput1.imaginary)/50
-		rightX = (this.myOutput.real+searchSize)-(this.myInput1.real*this.myInput1.real-this.myInput1.imaginary*this.myInput1.imaginary)/50
-		upperY = (this.myOutput.imaginary+searchSize)-(2*this.myInput1.real*this.myInput1.imaginary)/50
-		lowerY = (this.myOutput.imaginary-searchSize)-(2*this.myInput1.real*this.myInput1.imaginary)/50
-		
-		this.compareShifts()
-		this.myOutput.real = this.myOutput.real+shiftX
-		this.myOutput.imaginary = this.myOutput.imaginary+shiftY
+		this.compareShifts();
+		this.myOutput.addGlobal(shiftX, shiftY);
 	    }else{
-		
+		// ???
 		//NOTE: unlike the above searches, where we just ignore input2, in this case we start each iteration by moving the "invisible" input2 to towards input1, and then use that position to update input1 
-		this.myInput2.real += (this.myInput1.real-this.myInput2.real)*.4
-		this.myInput2.imaginary += (this.myInput1.imaginary-this.myInput2.imaginary)*.4
+		this.myInput2.addGlobal((r1 - r2)*.4, (i1 - i2)*.4); // not sure if we actually need to update this
+		r2 = this.myInput2.getReal();                        // or if e.g. r2 += (r1-r2)*.4 would suffice
+		i2 = this.myInput2.getImaginary();
 		
-		denominator = ((this.myInput2.real*this.myInput2.real)+(this.myInput2.imaginary*this.myInput2.imaginary))/50
+		var denominator = ((r2 * r2) + (i2 * i2))/50;
+		var rquot = ((rout * r2) + (iout * i2)) / denominator;
+		var iquot = ((iout * r2) - (rout * i2)) / denominator;
 		
-		leftX = (this.myInput1.real-searchSize)-(((this.myOutput.real*this.myInput2.real)+(this.myOutput.imaginary*this.myInput2.imaginary))/denominator)
-		rightX = (this.myInput1.real+searchSize)-(((this.myOutput.real*this.myInput2.real)+(this.myOutput.imaginary*this.myInput2.imaginary))/denominator)
-		upperY = (this.myInput1.imaginary+searchSize)-(((this.myOutput.imaginary*this.myInput2.real)-(this.myOutput.real*this.myInput2.imaginary))/denominator)
-		lowerY = (this.myInput1.imaginary-searchSize)-(((this.myOutput.imaginary*this.myInput2.real)-(this.myOutput.real*this.myInput2.imaginary))/denominator)
+		leftX = (r1 - searchSize) - rquot;
+		rightX = (r1 + searchSize) - rquot;
+		upperY = (i1 + searchSize) - iquot;
+		lowerY = (i1 - searchSize) - iquot;
 		
-		this.compareShifts()
-		this.myInput1.real = this.myInput1.real+shiftX
-		this.myInput1.imaginary = this.myInput1.imaginary+shiftY
-		
+		this.compareShifts();
+		this.myInput1.addGlobal(shiftX, shiftY);
 	    }
 	}
     }
-    
+
+    // display all the pieces of this relation
     this.display = function(){
 	
 	//display for uncollapsed operator...
@@ -358,9 +370,9 @@ function MakeOperator(type) {
 		strokeWeight(1)
 		beginShape()
 		vertex(width/2,height/2)
-		vertex(global2StageX(this.myInput1.real), global2StageY(this.myInput1.imaginary))
-		vertex(global2StageX(this.myOutput.real), global2StageY(this.myOutput.imaginary))
-		vertex(global2StageX(this.myInput2.real), global2StageY(this.myInput2.imaginary))
+		vertex(this.myInput1.getReal(), this.myInput1.getImaginary());
+		vertex(this.myOutput.getReal(), this.myOutput.getImaginary());
+		vertex(this.myInput2.getReal(), this.myInput2.getImaginary());
 		endShape(CLOSE)
 		
 		//nodes
@@ -376,11 +388,11 @@ function MakeOperator(type) {
 		//lines
 		noFill()
 		strokeWeight(1)
-		stroke(255,0,0)
-		line(width/2,height/2,global2StageX(this.myOutput.real),global2StageY(this.myOutput.imaginary))
-		stroke(255,100,0)
-		line(width/2,height/2,global2StageX(this.myInput1.real),global2StageY(this.myInput1.imaginary))
-		line(width/2,height/2,global2StageX(this.myInput2.real),global2StageY(this.myInput2.imaginary))
+		stroke(255,0,0);
+		line(width/2, height/2, this.myOutput.getReal(),this.myOutput.getImaginary());
+		stroke(255,100,0);
+		line(width/2, height/2,this.myInput1.getReal(), this.myInput1.getImaginary());
+		line(width/2, height/2,this.myInput2.getReal(), this.myInput2.getImaginary());
 		
 		//nodes
 		noStroke()        
@@ -402,7 +414,7 @@ function MakeOperator(type) {
 		strokeWeight(1)
 		
 		//line...
-		line(width/2,height/2,global2StageX(this.myOutput.real), global2StageY(this.myOutput.imaginary))
+		line(width/2, height/2, this.myOutput.getReal(), this.myOutput.getImaginary());
 		
 		//nodes
 		
@@ -417,9 +429,9 @@ function MakeOperator(type) {
 		noFill()
 		stroke(255,0,0)
 		strokeWeight(1)
-		line(width/2,height/2,global2StageX(this.myOutput.real), global2StageY(this.myOutput.imaginary))
+		line(width/2, height/2, this.myOutput.getReal(), this.myOutput.getImaginary());
 		stroke(255,100,0)
-		line(width/2,height/2,global2StageX(this.myInput1.real), global2StageY(this.myInput1.imaginary))
+		line(width/2, height/2, this.myInput1.getReal(), this.myInput1.getImaginary());
 		
 		//nodes
 		
@@ -444,7 +456,7 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,100,0)
 	    }
-	    ellipse(global2StageX(this.myInput1.real),global2StageY(this.myInput1.imaginary),15,15)
+	    ellipse(this.myInput1.getReal(), this.myInput1.getImaginary(), 15, 15);
 	}
 	if(this.myInput2.free){
 	    if(type==0){
@@ -452,7 +464,7 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,100,0)
 	    }
-	    ellipse(global2StageX(this.myInput2.real),global2StageY(this.myInput2.imaginary),15,15)
+	    ellipse(this.myInput2.getReal(), this.myInput2.getImaginary(), 15, 15);
 	}
 	if(this.myOutput.free){
 	    if(type==0){
@@ -460,7 +472,7 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,0,0)
 	    }
-	    ellipse(global2StageX(this.myOutput.real),global2StageY(this.myOutput.imaginary),15,15)
+	    ellipse(this.myOutput.getReal(), this.myOutput.getImaginary(), 15, 15);
 	}
     }
 }

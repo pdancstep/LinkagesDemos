@@ -1,12 +1,10 @@
-var myOperators = []
-var myBindings = []
+var myOperators = [] // global array of relational operators (each with 1-2 free and 1 bound Number)
+var myBindings = [] // global array of stacks where Numbers in each stack are bound to share the same coordinates
 
 function setup() {
   createCanvas(1400,800)
   textAlign(CENTER,CENTER)
-
 }
-
 
 var indicator = 50
 
@@ -149,7 +147,7 @@ function draw() {
     fill(255)
     noStroke()
     for(k=0;k<freeNodes.length;k++){
-	text(freeNodes[k].real,100,100+30*k)
+	text(freeNodes[k].getRealGlobal(),100,100+30*k)
     }   
 }
 
