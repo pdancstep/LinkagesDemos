@@ -1,7 +1,7 @@
 function MakeBinding(node1,node2){
     
-    this.myStack = [node1,node2]
-    this.dragging = false
+    this.myStack = [node1,node2];
+    this.dragging = false;
 
     // TODO: add error check to make sure at least 1 of the two nodes is free
 
@@ -18,7 +18,7 @@ function MakeBinding(node1,node2){
 
     // check if cursor is over this stack of nodes
     this.overMe = function(){
-	this.over = myStack[0].overMe();
+	this.over = this.myStack[0].overMe();
 	return this.over;
     }
 
@@ -41,8 +41,8 @@ function MakeBinding(node1,node2){
   	//then check for exceptions...
   	for (i=0; i<this.myStack.length; i++){
   	    if (!this.myStack[i].free){
-  		this.free = false 
-  		this.myBoundNodeIndex = i
+  		this.free = false;
+  		this.myBoundNodeIndex = i;
   	    }
   	}
     }
@@ -51,9 +51,9 @@ function MakeBinding(node1,node2){
     this.reverseBinding = function(){
   	if (this.over && !this.free){
 	    //top level reversal boolean
-	    reversingOperator = true
+	    reversingOperator = true;
 	    //local reversal boolean
-	    this.beingReversed = true
+	    this.beingReversed = true;
   	}
     }
 
@@ -61,8 +61,8 @@ function MakeBinding(node1,node2){
     this.update = function(){
 	
 	if (this.dragging){
-	    this.myStack[0].setReal(mouseX);
-	    this.myStack[0].setImaginary(mouseY);
+	    this.myStack[0].setRealPx(mouseX);
+	    this.myStack[0].setImaginaryPx(mouseY);
 	}
 
 	// in free bindings, everything follows the top node;
@@ -79,17 +79,23 @@ function MakeBinding(node1,node2){
     }
 
     // display this stack
+    // why doesn't this call this.myStack[0].display()? -J
     this.display = function(){
-	fill(0,255,0,150)
-	noStroke()
-	ellipse(this.myStack[0].getReal(), this.myStack[0].getImaginary(), 15, 15);
-	//fill(255)
-	//text(node2.free, this.myStack[0].getReal(), this.myStack[0].getImaginary()+10)
+	fill(0,255,0,150);
+	noStroke();
+	ellipse(this.myStack[0].getRealPx(),
+		this.myStack[0].getImaginaryPx(), 15, 15);
+	//fill(255);
+	//text(node2.free,
+	//     this.myStack[0].getRealPx(),
+	//     this.myStack[0].getImaginaryPx()+10);
 	if(this.free){
-	    noFill()
-	    stroke(255,200)
-	    strokeWeight(3)
-	    ellipse(this.myStack[0].getReal(), this.myStack[0].getImaginary(), 20, 20)
+	    noFill();
+	    stroke(255,200);
+	    strokeWeight(3);
+	    ellipse(this.myStack[0].getRealPx(),
+		    this.myStack[0].getImaginaryPx(),
+		    20, 20);
 	}
     }
 }
