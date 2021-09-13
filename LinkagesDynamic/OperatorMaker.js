@@ -316,10 +316,10 @@ function MakeOperator(type) {
 		// note: previously this section recalculated everything in terms
 		// of only Input1, but since both inputs should have the same
 		// coordinates, I'm just using the product we already calculated -J
-		leftX = (rout - searchSize) - rprod/50;
-		rightX = (rout + searchSize) - rprod/50;
-		upperY = (iout + searchSize) - iprod/50;
-		lowerY = (iout - searchSize) - iprod/50;
+		leftX = (rout - searchSize) - rprod;
+		rightX = (rout + searchSize) - rprod;
+		upperY = (iout + searchSize) - iprod;
+		lowerY = (iout - searchSize) - iprod;
 		
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
