@@ -1,20 +1,12 @@
 function MakeBinding(node1,node2){
     
-    this.myStack = [node1,node2];
-    this.dragging = false;
-
     // TODO: add error check to make sure at least 1 of the two nodes is free
 
-    /////// can this section just be a call to this.amIFree?
-    //
-    // the stack is free iff both of its nodes are free
-    this.free = node1.free && node2.free;
-    // if the stack is bound, determine which node makes it bound
-    if (!this.free){
-	this.myBoundNodeIndex = node1.free ? 1 : 0;
-    }
-    //
-    ///////
+    this.myStack = [node1,node2];
+    node1.inStack = true;
+    node2.inStack = true;
+    
+    this.dragging = false;
 
     // check if cursor is over this stack of nodes
     this.overMe = function(){
@@ -25,13 +17,13 @@ function MakeBinding(node1,node2){
     // notify this stack that it has been clicked
     this.clickMe = function(){
 	if (this.over && this.free){
-	    this.dragging = true
+	    this.dragging = true;
 	}
     }
 
     // ???
     this.allFalse = function(){
-	this.dragging = false
+	this.dragging = false;
     }
     
     // function to decide if updated binding is free
@@ -46,6 +38,11 @@ function MakeBinding(node1,node2){
   	    }
   	}
     }
+
+    // run amIFree to set initial values of this.free and this.myBoundNodeIndex
+    this.amIFree();
+
+
 
     // ???
     this.reverseBinding = function(){

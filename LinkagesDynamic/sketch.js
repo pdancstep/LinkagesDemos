@@ -34,12 +34,11 @@ var holdLength = 700;
 
 //variables defining first two nodes available for binding...
 var lookingForFirstBind = true;
-var completedBind = false ;
+var completedBind = false;
 var bindingNode1;
 var bindingNode2;
 //boolean to distinguish between single-node addition and full merge of two binds...
 var bindToBind = false;
-
 
 
 //boolean for going into state of switching a dependency...
@@ -89,7 +88,7 @@ function draw() {
     strokeWeight(1);
     line(0,height/2,width,height/2);
     line(width/2,0,width/2,height);
-    ellipse(width/2,height/2,100,100);
+    ellipse(width/2,height/2,100,100); // unit circle
     
     //buttons
     noStroke();
@@ -112,11 +111,11 @@ function draw() {
     //coordinate data
     fill(150);
     noStroke();
-    for(i=-15;i<16;i++){
-	text(i,width/2+i*50,height/2-16);
-	text(-i+"i",width/2-20,height/2+i*50);
-	ellipse(width/2+i*50,height/2,5,5);
-	ellipse(width/2,height/2+i*50,5,5);
+    for (i=-15; i<16; i++){
+	text(i, width/2+i*50, height/2-16);
+	text(-i+"i", width/2-20, height/2+i*50);
+	ellipse(width/2+i*50, height/2, 5, 5);
+	ellipse(width/2, height/2+i*50, 5, 5);
     }
     
     if(indicatorFlash){
@@ -125,14 +124,14 @@ function draw() {
     }
     
     //display mode while alternative dependency...
-    if(reversingOperator){
+    if (reversingOperator){
 	background(0,150);
-	for(k=0;k<freeNodes.length;k++){
-	    freeNodes[k].freeNodeDisplay();
+	for (const node of freeNodes) {
+	    node.freeNodeDisplay();
 	}
     }
-
-    // what's this bit??? -J
+    
+    // debug info - delete later
     fill(255);
     noStroke();
     for(k=0;k<freeNodes.length;k++){
@@ -150,58 +149,13 @@ function findNewBind(){
     //..and that our search is not yet complete
     completedBind = false;
     //..and that we start out assuming there's an unstacked node...
-    bindToBind = false ;
+    bindToBind = false;
     
     //first look through all non-bound nodes...
-    for (s=0; s<myOperators.length; s++){
-	
-	if (myOperators[s].myInput1.over && !myOperators[s].myInput1.inStack){
-	    if (lookingForFirstBind){
-		bindingNode1 = myOperators[s].myInput1;
-		lookingForFirstBind = false;
-		continue;
-	    }else{
-		if (bindingNode1.free ||
-		    (!bindingNode1.free && myOperators[s].myInput1.free)){
-		    bindingNode2 = myOperators[s].myInput1;
-		    bind1();
-		    completedBind = true;
-		    break;
-		}
-	    }
-	}
-	
-	if(myOperators[s].myInput2.over && !myOperators[s].myInput2.inStack){
-	    if(lookingForFirstBind){
-		bindingNode1 = myOperators[s].myInput2;
-		lookingForFirstBind = false;
-		continue;
-	    }else{
-		if (bindingNode1.free ||
-		    (!bindingNode1.free && myOperators[s].myInput2.free)){
-		    bindingNode2 = myOperators[s].myInput2;
-		    bind1();
-		    completedBind = true;
-		    break;
-		}
-	    }
-	}
-	
-	if (myOperators[s].myOutput.over && !myOperators[s].myOutput.inStack){
-	    if(lookingForFirstBind){
-		bindingNode1 = myOperators[s].myOutput;
-		lookingForFirstBind = false;
-		continue;
-	    }else{
-		if (bindingNode1.free ||
-		    (!bindingNode1.free && myOperators[s].myOutput.free)){
-		    bindingNode2 = myOperators[s].myOutput;
-		    bind1();
-		    completedBind = true;
-		    break;
-		}
-	    }
-	}
+    for (const oper of myOperators){
+	attemptBind(oper.myInput1);
+	attemptBind(oper.myInput2);
+	attemptBind(oper.myOutput);
     }
     
     //at this stage we may have:
@@ -211,68 +165,65 @@ function findNewBind(){
     //3) have no possible bindings yet (lookingForFirstBind = true)
     //      => will add the elements of one .myStack to the other binding's .myStack
     
-    if(!completedBind){
-	for (s=0;s<myBindings.length;s++){
-	    
-	    if (myBindings[s].over){
+    if (completedBind){
+	return;
+    }
+    
+    for (var s=0; s < myBindings.length; s++){
+	let stck = myBindings[s];
+	
+	if (stck.over){
+	    if (lookingForFirstBind){
+		bindingNode1 = stck;
+		lookingForFirstBind = false;
+		bindToBind = true;
+		continue;
 		
-		if (lookingForFirstBind){
-		    bindingNode1 = myBindings[s];
-		    lookingForFirstBind = false;
-		    bindToBind = true;
-		    continue;
-		    
-		}else{
-		    
-		    if (bindingNode1.free ||
-			(!bindingNode1.free && myBindings[s].free)){
-			bindingNode2 = myBindings[s];
+	    }else{
+		if (bindingNode1.free || stck.free){
+		    bindingNode2 = stck;
+		    indicatorFlash = true;
+
+		    // adding a node to an existing stack...
+		    if(!bindToBind){
+			bindingNode1.inStack = true;
+			stck.myStack.push(bindingNode1);
+			//update free status of stack
+			stck.amIFree();
 			
-			//if we're adding a node to an existing stack...
-			if(!bindToBind){
-			    bind2();
-			    
-			    //if we'er merging two stacks...
-			}else{
-			    bind3();
+		    }else{ // merging two stacks...
+			for(const node of stck.myStack){
+			    bindingNode1.myStack.push(node);
 			}
-			
-			completedBind = true;
-			break;
+			//update free status of stack
+			bindingNode1.amIFree();
+			//erase old stack
+			myBindings.splice(s,1);
 		    }
+		    
+		    completedBind = true;
+		    break;
 		}
 	    }
 	}
-    }	
-}
-
-//bind two nodes, initiating a stack
-function bind1(){
-    indicatorFlash = true;
-    bindingNode1.inStack = bindingNode2.inStack = true;
-    myBindings.push(new MakeBinding(bindingNode1,bindingNode2));
-}
-//add a node to an existing stack
-function bind2(){
-    indicatorFlash = true;
-    bindingNode1.inStack = true;
-    //just reuse "s" variable from where for loop broke? // oh no :( -J
-    myBindings[s].myStack.push(bindingNode1);
-    //update free status of stack
-    myBindings[s].amIFree();
-}
-//merge two stacks
-function bind3(){
-    indicatorFlash = true;
-    for(t=0; t<myBindings[s].myStack.length; t++){
-	bindingNode1.myStack.push(myBindings[s].myStack[t]);
     }
-    //update free status of stack
-    bindingNode1.amIFree();
-    //erase old stack
-    myBindings.splice(s,1);
-}
+}	
 
+function attemptBind(node){
+    if (!completedBind && node.over && !node.inStack){
+	if (lookingForFirstBind){
+	    bindingNode1 = node;
+	    lookingForFirstBind = false;
+	}else{
+	    if (bindingNode1.free || node.free){
+		bindingNode2 = node;
+		indicatorFlash = true;
+		myBindings.push(new MakeBinding(bindingNode1,bindingNode2));
+		completedBind = true;
+	    }
+	}
+    }
+}
 
 //index of dependent node in stack in myBindings[n].myStack
 var dependentNodeIndex;
