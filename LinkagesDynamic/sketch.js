@@ -225,76 +225,79 @@ function attemptBind(node){
     }
 }
 
-//index of dependent node in stack in myBindings[n].myStack
-var dependentNodeIndex;
-//index of operator containing dependent node
-var dependentOperatorIndex;
-
-
 //chases down all free nodes on which the given node is dependent
 // (starting with the other two nodes in the given operator)
 function freeNodeSearch(node){
     //function is always called on a free node - if that node isn't in a stack add it to our freeNodes array
-    if(!node.inStack){
+    if (!node.inStack){
 	freeNodes.push(node);
     }else{
-	
 	//1. Determine which stack the node is in
-	var bindingIndex = -1;
-	for (a=0; a<myBindings.length; a++){
-    	    if (myBindings[a].myStack.includes(node)){
-    		if(bindingIndex>=0){
-    		    //error message
-    		}
-    		bindingIndex = a;
+	let candidate;
+	for (const stck of myBindings){
+    	    if (stck.myStack.includes(node)){
+    		candidate = stck;
+		break;
     	    }
 	}
-	//Check if bindinIndex is less than zero -> error
+	if (candidate===undefined){
+	    // TODO better error message?
+	    console.log("Misplaced a node among the stacks!");
+	}
 	
 	//2. Figure out if that stack is free
-	if(myBindings[bindingIndex].free){
-	    
+	if(candidate.free){
 	    //3. If so add top of stack to freeNodes
-    	    freeNodes.push(myBindings[bindingIndex].myStack[0]);
+    	    freeNodes.push(candidate.myStack[0]);
 	    
-	    
-	    //4. If not, figure out the index of dependent node in the stack...
+	//4. If not, figure out the index of dependent node in the stack...
 	}else{
-	    
-	    for (a=0; a<myBindings[bindingIndex].myStack.length; a++){
-		if (!myBindings[bindingIndex].myStack[a].free){
-    		    dependentNodeIndex = a;
+	    let dependentNode;
+	    for (const node of candidate.myStack){
+		if (!node.free){
+    		    dependentNode = node;
+		    break;
     		}
 	    }
+	    if (dependentNode===undefined){
+		// TODO better error message?
+		console.log("Misplaced a node within its stack!");
+	    }
+	    
 	    
 	    //6. And figure out which operator it belongs to...
-	    for (a=0; a<myOperators.length; a++){
-		if(myOperators[a].myInput1==myBindings[bindingIndex].myStack[dependentNodeIndex]||
-		   myOperators[a].myInput2==myBindings[bindingIndex].myStack[dependentNodeIndex]||
-		   myOperators[a].myOutput==myBindings[bindingIndex].myStack[dependentNodeIndex]){
-		    
-		    dependentOperatorIndex = a;
-		    
-		}
-		
-		//5. Call freeNodeSearch on the free nodes of that operatorr...
-		if(!myOperators[dependentOperatorIndex].myInput1.free){
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myInput2);
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myOutput);
-		}
-		
-		if(!myOperators[dependentOperatorIndex].myInput2.free){
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myInput1);
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myOutput);
-		}
-		
-		if(!myOperators[dependentOperatorIndex].myOutput.free){
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myInput1);
-		    freeNodeSearch(myOperators[dependentOperatorIndex].myInput2);
+	    let dependentOperator;
+	    for (const oper of myOperators){
+		if(oper.myInput1===dependentNode ||
+		   oper.myInput2===dependentNode ||
+		   oper.myOutput===dependentNode){
+		    dependentOperator = oper;
+		    break;
 		}
 	    }
-	} 
-    }
+	    if (dependentOperator===undefined)
+	    {
+		// TODO better error message?
+		console.log("Misplaced a node among the operators!");
+	    }
+	    
+	    //5. Call freeNodeSearch on the free nodes of that operatorr...
+	    if(!dependentOperator.myInput1.free){
+		freeNodeSearch(dependentOperator.myInput2);
+		freeNodeSearch(dependentOperator.myOutput);
+	    }
+	    
+	    if(!dependentOperator.myInput2.free){
+		freeNodeSearch(dependentOperator.myInput1);
+		freeNodeSearch(dependentOperator.myOutput);
+	    }
+	    
+	    if(!dependentOperator.myOutput.free){
+		freeNodeSearch(dependentOperator.myInput1);
+		freeNodeSearch(dependentOperator.myInput2);
+	    }
+	}
+    } 
 }
 
 function pixelToAxisX(coord) {
