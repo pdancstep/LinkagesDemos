@@ -233,37 +233,26 @@ function freeNodeSearch(node){
 	freeNodes.push(node);
     }else{
 	//1. Determine which stack the node is in
-	let candidate;
+	let dependentStack;
 	for (const stck of myBindings){
-    	    if (stck.myStack.includes(node)){
-    		candidate = stck;
+    	    if (stck.owns(node)){
+    		dependentStack = stck;
 		break;
     	    }
 	}
-	if (candidate===undefined){
+	if (dependentStack===undefined){
 	    // TODO better error message?
 	    console.log("Misplaced a node among the stacks!");
 	}
-	
+
+	let dependentNode = dependentStack.getPrimary();
 	//2. Figure out if that stack is free
-	if(candidate.free){
+	if(dependentStack.free){
 	    //3. If so add top of stack to freeNodes
-    	    freeNodes.push(candidate.myStack[0]);
+    	    freeNodes.push(dependentNode);
 	    
 	//4. If not, figure out the index of dependent node in the stack...
 	}else{
-	    let dependentNode;
-	    for (const node of candidate.myStack){
-		if (!node.free){
-    		    dependentNode = node;
-		    break;
-    		}
-	    }
-	    if (dependentNode===undefined){
-		// TODO better error message?
-		console.log("Misplaced a node within its stack!");
-	    }
-	    
 	    
 	    //6. And figure out which operator it belongs to...
 	    let dependentOperator;

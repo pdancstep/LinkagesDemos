@@ -31,17 +31,44 @@ function MakeBinding(node1,node2){
   	//assume to be free...
   	this.free = true
   	//then check for exceptions...
-  	for (i=0; i<this.myStack.length; i++){
-  	    if (!this.myStack[i].free){
+  	for (const node of this.myStack){
+  	    if (!node.free){
   		this.free = false;
-  		this.myBoundNodeIndex = i;
+  		this.myBoundNode = node;
+		break;
   	    }
   	}
     }
 
-    // run amIFree to set initial values of this.free and this.myBoundNodeIndex
+    // run amIFree to set initial values of this.free and this.myBoundNode
     this.amIFree();
 
+    // does this binding own the given node?
+    this.owns = function(node){
+	return this.myStack.includes(node);
+    }
+
+    // returns the dependent node in the stack, or false if the binding is free
+    this.getDependent = function(){
+	// make sure we're up to date about whether we're free
+	this.amIFree();
+	if (this.free){
+	    return false;
+	}else{
+	    return this.myBoundNode;
+	}
+    }
+
+    // returns the dependent node, or the first node if the binding is free
+    this.getPrimary = function(){
+	// make sure we're up to date about whether we're free
+	this.amIFree();
+	if (this.free){
+	    return this.myStack[0];
+	}else{
+	    return this.myBoundNode;
+	}
+    }
 
 
     // ???
@@ -64,12 +91,12 @@ function MakeBinding(node1,node2){
 
 	// in free bindings, everything follows the top node;
 	// in bound bindings, everything follows the bound node
-	var follow = this.free ? 0 : this.myBoundNodeIndex;
+	var follow = this.free ? this.myStack[0] : this.myBoundNode;
 	
-	var realp = this.myStack[follow].getReal();
-	var imagp = this.myStack[follow].getImaginary();
+	var realp = follow.getReal();
+	var imagp = follow.getImaginary();
 
-	for (node of this.myStack){
+	for (const node of this.myStack){
 	    node.setReal(realp);
 	    node.setImaginary(imagp);
 	}
