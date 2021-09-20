@@ -21,7 +21,6 @@ function MakeBinding(node1,node2){
 	}
     }
 
-    // ???
     this.allFalse = function(){
 	this.dragging = false;
     }
@@ -69,7 +68,6 @@ function MakeBinding(node1,node2){
 	    return this.myBoundNode;
 	}
     }
-
 
     // ???
     this.reverseBinding = function(){

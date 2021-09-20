@@ -3,7 +3,6 @@
 
 function MakeOperator(type) {
     
-    
     if(type==0){
 	
 	this.myInput1 = new MakeNumber(0,0,true);
@@ -50,7 +49,9 @@ function MakeOperator(type) {
     
     //checks to see if mouse is over any nodes
     this.clickMe = function(){
-	
+
+	// why is checking input2 here dependent on input1,
+	// but checking output isn't?
 	this.myInput1.clickMe();
 	//give drag priority to input 1
 	if (!this.myInput1.dragging){
@@ -74,10 +75,10 @@ function MakeOperator(type) {
 	this.dragging = false;
     }
     
-    //double click on nodes to control dependencies...
+    // double click on nodes to control dependencies...
     this.reverseOperator = function(){
 	
-	//Mode changes for uncollapsed adder...
+	// Mode changes for uncollapsed adder...
 	// Right now activates mode-switch chooser,
 	// and reversals are handled by a function at the sketch level...
 	if(!this.collapsed){
@@ -124,7 +125,7 @@ function MakeOperator(type) {
 		freeNodeSearch(this.myInput2);
 	    }	    
 	}else{
-	    //mode changes for collapsed adder
+	    // mode changes for collapsed adder
 	    // (which are automatic, so don't need the sketch level function...)
 	    
 	    //double click on input1
@@ -155,7 +156,6 @@ function MakeOperator(type) {
     }
     
     this.update = function(){
-	
 	//check if this operator is being collapsed via press-and-hold...
 	if(this.myInput1.over && this.myInput2.over){
 	    if(pressAndHold){
@@ -165,6 +165,7 @@ function MakeOperator(type) {
 		    this.collapsed = true;
 		    this.myInput1.free = true;
 		    this.myOutput.free = false;
+		    // what happens to input 2 here?
 		}
 	    }
 	}
@@ -197,18 +198,14 @@ function MakeOperator(type) {
 	var leftX;
 	var rightX;
 
-	//for uncollapsed operator
-	if (!this.collapsed){
-
+	if (!this.collapsed){ // for uncollapsed operator
 	    if (!this.reverseMode1 && !this.reverseMode2){
-		//check whether moving left or right gives a better fit to constraints...
+		//check whether moving left or right better fits constraints...
 		leftX = (rout - searchSize) - (r1 + r2);
 		rightX = (rout + searchSize) - (r1 + r2);
-
 		//...same for up or down movement...
 		upperY = (iout + searchSize) - (i1 + i2);
 		lowerY = (iout - searchSize) - (i1 + i2);
-		
 		//decide whether/where to shift ouput position...
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
@@ -218,7 +215,6 @@ function MakeOperator(type) {
 		rightX = (r1 + searchSize) - (rout - r2);
 		upperY = (i1 + searchSize) - (iout - i2);
 		lowerY = (i1 - searchSize) - (iout - i2);
-		
 		this.myInput1.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
@@ -227,20 +223,15 @@ function MakeOperator(type) {
 		rightX = (r2 + searchSize) - (rout - r1);
 		upperY = (i2 + searchSize) - (iout - i1);
 		lowerY = (i2 - searchSize) - (iout - i1);
-		
 		this.myInput2.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 	    }
-	    
-	    //for collapsed operator
-	}else{
-	    
+	}else{ // collapsed operator
 	    if(!this.reverseCollapsed){
 		leftX = (rout - searchSize) - (r1 * 2);
 		rightX = (rout + searchSize) - (r1 * 2);
 		upperY = (iout + searchSize) - (i1 * 2);
 		lowerY = (iout - searchSize) - (i1 * 2);
-		
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
@@ -249,15 +240,13 @@ function MakeOperator(type) {
 		rightX = (r1 + searchSize) - (rout / 2);
 		upperY = (i1 + searchSize) - (iout / 2);
 		lowerY = (i1 - searchSize) - (iout / 2);
-		
 		this.myInput1.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
-	    }   
+	    }
 	}
     }
     
     this.propagateOutputProd = function(){
-
 	var r1 = this.myInput1.getReal();
 	var i1 = this.myInput1.getImaginary();
 	var r2 = this.myInput2.getReal();
@@ -276,36 +265,32 @@ function MakeOperator(type) {
 	if(!this.collapsed){ //for uncollapsed operator
 	    console.log("!");
 	    if(!this.reverseMode1&&!this.reverseMode2){
-		//check whether moving left or right gives a better fit to constraints...
+		//check whether moving left or right better fits constraints...
 		leftX = (rout - searchSize) - rprod;
 		rightX = (rout + searchSize) - rprod;
-		
 		//...same for up or down movement...
 		upperY = (iout + searchSize) - iprod;
 		lowerY = (iout - searchSize) - iprod;
-		console.log(",");
-		
 		//decide whether/where to shift ouput position...
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
 	    }else if(this.reverseMode1){
-		var denominator = (r2 * r2) + (i2 * i2);
-		var rquot = ((rout * r2) + (iout * i2)) / denominator;
-		var iquot = ((iout * r2) - (rout * i2)) / denominator;
+		let denominator = (r2 * r2) + (i2 * i2);
+		let rquot = ((rout * r2) + (iout * i2)) / denominator;
+		let iquot = ((iout * r2) - (rout * i2)) / denominator;
 		
 		leftX = (r1 - searchSize) - rqout;
 		rightX = (r1 + searchSize) - rquot;
 		upperY = (i1 + searchSize) - iquot;
 		lowerY = (i1 - searchSize) - iquot;
-		
 		this.myInput1.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
 	    }else if(this.reverseMode2){
-		var denominator = (r1 * r1) + (i1 * i1);
-		var rquot = ((rout * r1) + (iout * i1)) / denominator;
-		var iquot = ((iout * r1) - (rout * i1)) / denominator;
+		let denominator = (r1 * r1) + (i1 * i1);
+		let rquot = ((rout * r1) + (iout * i1)) / denominator;
+		let iquot = ((iout * r1) - (rout * i1)) / denominator;
 		
 		leftX = (r2 - searchSize) - rquot;
 		rightX = (r2 + searchSize) - rquot;
@@ -315,9 +300,7 @@ function MakeOperator(type) {
 		this.myInput2.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 	    }
-	    
 	}else{ //for collapsed operator
-	    
 	    if(!this.reverseCollapsed){
 		// note: previously this section recalculated everything in terms
 		// of only Input1, but since both inputs should have the same
@@ -326,19 +309,21 @@ function MakeOperator(type) {
 		rightX = (rout + searchSize) - rprod;
 		upperY = (iout + searchSize) - iprod;
 		lowerY = (iout - searchSize) - iprod;
-		
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 	    }else{
 
-		//NOTE: unlike the above searches, where we just ignore input2, in this case we start each iteration by moving the "invisible" input2 to towards input1, and then use that position to update input1 
+		// NOTE: unlike the above searches, where we just ignore input2,
+		// in this case we start each iteration by
+		// moving the "invisible" input2 to towards input1,
+		// and then use that position to update input1 
 		this.myInput2.shift((r1 - r2)*.4, (i1 - i2)*.4);
 		r2 = this.myInput2.getReal();
 		i2 = this.myInput2.getImaginary();
 		
-		var denominator = (r2 * r2) + (i2 * i2);
-		var rquot = ((rout * r2) + (iout * i2)) / denominator;
-		var iquot = ((iout * r2) - (rout * i2)) / denominator;
+		let denominator = (r2 * r2) + (i2 * i2);
+		let rquot = ((rout * r2) + (iout * i2)) / denominator;
+		let iquot = ((iout * r2) - (rout * i2)) / denominator;
 		
 		leftX = (r1 - searchSize) - rquot;
 		rightX = (r1 + searchSize) - rquot;
@@ -353,13 +338,10 @@ function MakeOperator(type) {
 
     // display all the pieces of this relation
     this.display = function(){
-	
-	//display for uncollapsed operator...
-	if(!this.collapsed){
+	if(!this.collapsed){ // display for uncollapsed operator...
 	    
 	    if(type==0){      
-		
-		//parallelogram      
+		// parallelogram      
 		noFill();
 		stroke(30,200,225);
 		strokeWeight(1);
@@ -369,8 +351,7 @@ function MakeOperator(type) {
 		vertex(this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		vertex(this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
 		endShape(CLOSE);
-		
-		//nodes
+		// nodes
 		fill(200,255,255);
 		this.myInput1.display();
 		fill(200,255,255);
@@ -379,16 +360,17 @@ function MakeOperator(type) {
 		this.myOutput.display();
 		
 	    }else if(type==1){
-		
-		//lines
+		// lines
 		noFill();
 		strokeWeight(1);
 		stroke(255,0,0);
-		line(width/2, height/2, this.myOutput.getRealPx(),this.myOutput.getImaginaryPx());
+		line(width/2, height/2,
+		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		stroke(255,100,0);
-		line(width/2, height/2, this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
-		line(width/2, height/2, this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
-		
+		line(width/2, height/2,
+		     this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
+		line(width/2, height/2,
+		     this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
 		//nodes
 		noStroke();     
 		fill(255,0,0);
@@ -399,16 +381,14 @@ function MakeOperator(type) {
 		this.myInput2.display();
 	    }
 	    
-	}else{ //display for collapsed operator...
-	    
+	}else{ // display for collapsed operator...
 	    if(type==0){
-		
 		noFill();
 		stroke(30,200,225);
 		strokeWeight(1);
-
 		// only one line in a doubler/halver
-		line(width/2, height/2, this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
+		line(width/2, height/2,
+		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		//nodes
 		fill(200,255,200);
 		this.myInput1.display();
@@ -416,15 +396,15 @@ function MakeOperator(type) {
 		this.myOutput.display();
 		
 	    }else if(type==1){
-		
 		// lines for square and root
 		noFill();
 		stroke(255,0,0);
 		strokeWeight(1);
-		line(width/2, height/2, this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
+		line(width/2, height/2,
+		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		stroke(255,100,0);
-		line(width/2, height/2, this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
-		
+		line(width/2, height/2,
+		     this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
 		//nodes
 		noStroke();
 		fill(255,200,0);
@@ -435,10 +415,8 @@ function MakeOperator(type) {
 	}
     }
     
-    
     //maybe defining this at the level of the number?
     this.freeNodeDisplay = function(){
-	
 	noStroke();
 	
 	if(this.myInput1.free){
@@ -447,7 +425,8 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,100,0);
 	    }
-	    ellipse(this.myInput1.getRealPx(), this.myInput1.getImaginaryPx(), 15, 15);
+	    ellipse(this.myInput1.getRealPx(), this.myInput1.getImaginaryPx(),
+		    15, 15);
 	}
 	if(this.myInput2.free){
 	    if(type==0){
@@ -455,7 +434,8 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,100,0);
 	    }
-	    ellipse(this.myInput2.getRealPx(), this.myInput2.getImaginaryPx(), 15, 15);
+	    ellipse(this.myInput2.getRealPx(), this.myInput2.getImaginaryPx(),
+		    15, 15);
 	}
 	if(this.myOutput.free){
 	    if(type==0){
@@ -463,7 +443,8 @@ function MakeOperator(type) {
 	    }else{
 		fill(255,0,0);
 	    }
-	    ellipse(this.myOutput.getRealPx(), this.myOutput.getImaginaryPx(), 15, 15);
+	    ellipse(this.myOutput.getRealPx(), this.myOutput.getImaginaryPx(),
+		    15, 15);
 	}
     }
 }
