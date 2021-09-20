@@ -32,15 +32,6 @@ var pressAndHold = false;
 var timerStart ;
 var holdLength = 700;
 
-//variables defining first two nodes available for binding...
-var lookingForFirstBind = true;
-var completedBind = false;
-var bindingNode1;
-var bindingNode2;
-//boolean to distinguish between single-node addition and full merge of two binds...
-var bindToBind = false;
-
-
 //boolean for going into state of switching a dependency...
 var reversingOperator = false;
 
@@ -144,13 +135,33 @@ var indicatorFlash = false;
 //function that searches for two uncoupled nodes to bind and initiate a new stack...
 function findNewBind(){
 
+    //variables defining first two nodes available for binding...
+    let bindingNode1;
+    let bindingNode2;
+
     //initialize that we're looking for first bind
-    lookingForFirstBind = true;
+    let lookingForFirstBind = true;
     //..and that our search is not yet complete
-    completedBind = false;
+    let completedBind = false;
     //..and that we start out assuming there's an unstacked node...
-    bindToBind = false;
+    let bindToBind = false;
     
+    function attemptBind(node){
+	if (!completedBind && node.over && !node.inStack){
+	    if (lookingForFirstBind){
+		bindingNode1 = node;
+		lookingForFirstBind = false;
+	    }else{
+		if (bindingNode1.free || node.free){
+		    bindingNode2 = node;
+		    indicatorFlash = true;
+		    myBindings.push(new MakeBinding(bindingNode1,bindingNode2));
+		    completedBind = true;
+		}
+	    }
+	}
+    }
+
     //first look through all non-bound nodes...
     for (const oper of myOperators){
 	attemptBind(oper.myInput1);
@@ -209,26 +220,11 @@ function findNewBind(){
     }
 }	
 
-function attemptBind(node){
-    if (!completedBind && node.over && !node.inStack){
-	if (lookingForFirstBind){
-	    bindingNode1 = node;
-	    lookingForFirstBind = false;
-	}else{
-	    if (bindingNode1.free || node.free){
-		bindingNode2 = node;
-		indicatorFlash = true;
-		myBindings.push(new MakeBinding(bindingNode1,bindingNode2));
-		completedBind = true;
-	    }
-	}
-    }
-}
-
 //chases down all free nodes on which the given node is dependent
 // (starting with the other two nodes in the given operator)
 function freeNodeSearch(node){
-    //function is always called on a free node - if that node isn't in a stack add it to our freeNodes array
+    // function is always called on a free node;
+    // if that node isn't in a stack, add it to our freeNodes array
     if (!node.inStack){
 	freeNodes.push(node);
     }else{
@@ -251,15 +247,12 @@ function freeNodeSearch(node){
 	    //3. If so add top of stack to freeNodes
     	    freeNodes.push(dependentNode);
 	    
-	//4. If not, figure out the index of dependent node in the stack...
+	//4. If not, figure out which operator it belongs to
 	}else{
 	    
-	    //6. And figure out which operator it belongs to...
 	    let dependentOperator;
 	    for (const oper of myOperators){
-		if(oper.myInput1===dependentNode ||
-		   oper.myInput2===dependentNode ||
-		   oper.myOutput===dependentNode){
+		if (oper.owns(dependentNode)){
 		    dependentOperator = oper;
 		    break;
 		}
@@ -270,7 +263,7 @@ function freeNodeSearch(node){
 		console.log("Misplaced a node among the operators!");
 	    }
 	    
-	    //5. Call freeNodeSearch on the free nodes of that operatorr...
+	    //5. Call freeNodeSearch on the free nodes of that operator
 	    if(!dependentOperator.myInput1.free){
 		freeNodeSearch(dependentOperator.myInput2);
 		freeNodeSearch(dependentOperator.myOutput);
@@ -306,62 +299,57 @@ function axisToPixelY(coord) {
 }
 
 function touchStarted() {
-    
-    if(reversingOperator){
-	for(k=0; k<myOperators.length; k++){
-	    if(myOperators[k].beingReversed){
+    if (reversingOperator){
+	for (const oper of myOperators){
+	    if (oper.beingReversed){
 		
-		//giving up control of input 1
-		if (myOperators[k].myInput1.over && myOperators[k].myInput1.free){
-		    myOperators[k].myInput1.free = false;
+		// giving up control of input 1
+		if (oper.myInput1.over && oper.myInput1.free){
+		    oper.myInput1.free = false;
 		    
-		    if (!myOperators[k].myInput2.free){
-          		myOperators[k].myInput2.free = true;
-        	    }else if (!myOperators[k].myOutput.free){
-          		myOperators[k].myOutput.free = true;
+		    if (!oper.myInput2.free){
+          		oper.myInput2.free = true;
+        	    }else if (!oper.myOutput.free){
+          		oper.myOutput.free = true;
         	    }
 		    
-        	    myOperators[k].reverseMode1 = true;
-        	    myOperators[k].reverseMode2 = false;
+        	    oper.reverseMode1 = true;
+        	    oper.reverseMode2 = false;
 		    
 		}
 		
-		//giving up control of input 2
-		if (myOperators[k].myInput2.over && myOperators[k].myInput2.free){
-		    myOperators[k].myInput2.free = false;
+		// giving up control of input 2
+		if (oper.myInput2.over && oper.myInput2.free){
+		    oper.myInput2.free = false;
 		    
-		    if (!myOperators[k].myInput1.free){
-          		myOperators[k].myInput1.free = true;
-        	    }else if (!myOperators[k].myOutput.free){
-          		myOperators[k].myOutput.free = true;
+		    if (!oper.myInput1.free){
+          		oper.myInput1.free = true;
+        	    }else if (!oper.myOutput.free){
+          		oper.myOutput.free = true;
         	    }
 		    
-        	    myOperators[k].reverseMode1 = false;
-        	    myOperators[k].reverseMode2 = true;
+        	    oper.reverseMode1 = false;
+        	    oper.reverseMode2 = true;
 		    
 		}
 		
-		//giving up control of output
-		if (myOperators[k].myOutput.over && myOperators[k].myOutput.free){
-		    myOperators[k].myOutput.free = false;
+		// giving up control of output
+		if (oper.myOutput.over && oper.myOutput.free){
+		    oper.myOutput.free = false;
 		    
-		    if (!myOperators[k].myInput1.free){
-          		myOperators[k].myInput1.free = true;
-        	    }else if (!myOperators[k].myInput2.free){
-          		myOperators[k].myInput2.free = true;
+		    if (!oper.myInput1.free){
+          		oper.myInput1.free = true;
+        	    }else if (!oper.myInput2.free){
+          		oper.myInput2.free = true;
         	    }
 		    
-        	    myOperators[k].reverseMode1 = false;
-        	    myOperators[k].reverseMode2 = false;
-		    
+        	    oper.reverseMode1 = false;
+        	    oper.reverseMode2 = false;
 		}
-		
 	    }
 	}
 	reversingOperator = false;
     }
-    
-    
     
     if(dist(mouseX,mouseY,30,30)<10){
 	myOperators.push(new MakeOperator(0));
@@ -383,37 +371,37 @@ function touchStarted() {
 	intermediateReversals = [];
 	
 	//check if operator should change kinematic direction...
-	for (k=0; k<myOperators.length; k++){
-	    myOperators[k].reverseOperator();
+	for (const oper of myOperators){
+	    oper.reverseOperator();
 	}
 	//if no loose nodes are being reversed, go on to check bindings...
 	if (!reversingOperator){
-	    for (k=0; k<myBindings.length; k++){
-		myBindings[k].reverseBinding();
+	    for (const stck of myBindings){
+		stck.reverseBinding();
 	    }
 	}
 	tappedOnce = false;
     }
     
-    for (k=0; k<myOperators.length; k++){
+    for (const oper of myOperators){
 	//draggable node?
-	myOperators[k].clickMe();
+	oper.clickMe();
 	//if we found a draggable node, stop looking
-	if (myOperators[k].dragging){
+	if (oper.dragging){
 	    break;
 	}
     }
     
-    //FIX: opt out if a number is getting dragged, so we don't get nodes stuck to numbers?
-    for (k=0; k<myBindings.length; k++){
+    // FIX: opt out if a number is getting dragged,
+    // so we don't get nodes stuck to numbers?
+    for (const stck of myBindings){
 	//draggable node?
-	myBindings[k].clickMe();
+	stck.clickMe();
 	//if we found a draggable node, stop looking
-	if(myBindings[k].dragging){
+	if(stck.dragging){
 	    break;
 	}
     }
-    
 }
 
 function touchMoved() {
@@ -423,10 +411,10 @@ function touchMoved() {
 
 function touchEnded(){
     pressAndHold = false
-    for(k=0;k<myOperators.length;k++){
-	myOperators[k].allFalse();
+    for (const oper of myOperators){
+	oper.allFalse();
     }
-    for(k=0;k<myBindings.length;k++){
-	myBindings[k].allFalse();
+    for (const stck of myBindings){
+	stck.allFalse();
     }
 }

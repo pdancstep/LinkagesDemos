@@ -41,6 +41,12 @@ function MakeOperator(type) {
 		this.myInput2.overMe() ||
 		this.myOutput.overMe());
     }
+
+    this.owns = function(node){
+	return (this.myInput1 === node ||
+		this.myInput2 === node ||
+		this.myOutput === node);
+    }
     
     //checks to see if mouse is over any nodes
     this.clickMe = function(){
