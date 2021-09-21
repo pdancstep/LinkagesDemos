@@ -63,7 +63,7 @@ function MakeNumber(xPos,yPos,free){
 	}
     }
 
-    // ???
+    // display this node in reversing-mode style
     this.freeNodeDisplay = function() {
 	fill(255);
 	this.drawNode();

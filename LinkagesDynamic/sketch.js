@@ -12,8 +12,6 @@ var indicator = 50;
 
 //holds free nodes that a given node is dependent on (used to display during reversal)
 var freeNodes = [];
-//holds intermediate bound nodes that will need to be made free when reversal happens...
-var intermediateReversals = [];
 
 //how far to look in each direction
 var searchSize = .1;
@@ -297,18 +295,14 @@ function axisToPixelY(coord) {
     return (height/2) - (coord * 50);
 }
 
-function completeReversal() {
+function finishReversal() {
     for (const oper of myOperators){
 	if (oper.beingReversed){
 	    // giving up control of input 1
 	    if (oper.myInput1.over && oper.myInput1.free){
 		oper.myInput1.free = false;
-		
-		if (!oper.myInput2.free){
-          	    oper.myInput2.free = true;
-        	}else if (!oper.myOutput.free){
-          	    oper.myOutput.free = true;
-        	}
+		oper.myInput2.free = true;
+          	oper.myOutput.free = true;
 		
         	oper.reverseMode1 = true;
         	oper.reverseMode2 = false;
@@ -316,27 +310,19 @@ function completeReversal() {
 	    
 	    // giving up control of input 2
 	    if (oper.myInput2.over && oper.myInput2.free){
+          	oper.myInput1.free = true;
 		oper.myInput2.free = false;
-		
-		if (!oper.myInput1.free){
-          	    oper.myInput1.free = true;
-        	}else if (!oper.myOutput.free){
-          	    oper.myOutput.free = true;
-        	}
-		
+          	oper.myOutput.free = true;
+        			
         	oper.reverseMode1 = false;
         	oper.reverseMode2 = true;
 	    }
 	    
 	    // giving up control of output
 	    if (oper.myOutput.over && oper.myOutput.free){
+          	oper.myInput1.free = true;
+          	oper.myInput2.free = true;
 		oper.myOutput.free = false;
-		
-		if (!oper.myInput1.free){
-          	    oper.myInput1.free = true;
-        	}else if (!oper.myInput2.free){
-          	    oper.myInput2.free = true;
-        	}
 		
         	oper.reverseMode1 = false;
         	oper.reverseMode2 = false;
@@ -348,7 +334,7 @@ function completeReversal() {
 
 function touchStarted() {
     if (reversingOperator){
-	completeReversal();
+	finishReversal();
 	reversingOperator = false;
     }
     
@@ -366,9 +352,8 @@ function touchStarted() {
 	tappedOnce = true;
 	currentTime = millis();
     }else{
-	//empty freeNode and intermediateNode arrays...
+	//empty freeNode array
 	freeNodes = [];
-	intermediateReversals = [];
 	
 	//check if operator should change kinematic direction...
 	for (const oper of myOperators){
@@ -416,7 +401,7 @@ function touchMoved() {
 }
 
 function touchEnded(){
-    pressAndHold = false
+    pressAndHold = false;
     for (const oper of myOperators){
 	oper.allFalse();
     }

@@ -4,17 +4,12 @@
 function MakeOperator(type) {
     
     if(type==0){
-	
 	this.myInput1 = new MakeNumber(0,0,true);
 	this.myInput2 = new MakeNumber(0,0,true);
-	
 	this.myOutput = new MakeNumber(0,0,false);
-	
     }else if(type==1){
-	
 	this.myInput1 = new MakeNumber(1,0,true);
 	this.myInput2 = new MakeNumber(1,0,true);
-	
 	this.myOutput = new MakeNumber(1,0,false);
     }
     
@@ -22,17 +17,15 @@ function MakeOperator(type) {
     this.reverseMode1 = false;
     this.reverseMode2 = false;
     
-    //boolean that reports if one of its inputs is being dragged
+    //boolean that reports if one of this operator's nodes is being dragged
     this.dragging = false;
     
     //boolean marking that this operator is in the process of being reversed
     this.beingReversed = false;
     
-    
     //booleans for collapsed operator and its forward/backward kinematics
     this.collapsed = false;
     this.reverseCollapsed = false;
-    
     
     //checks each of its inputs to see if the mouse is currently hovering over
     this.overMe = function(){
@@ -41,6 +34,7 @@ function MakeOperator(type) {
 		this.myOutput.overMe());
     }
 
+    // does this node belong to this operator?
     this.owns = function(node){
 	return (this.myInput1 === node ||
 		this.myInput2 === node ||
@@ -73,7 +67,7 @@ function MakeOperator(type) {
 	}	
     }
 
-    // ???
+    // release mouse
     this.allFalse = function(){
 	this.myInput1.dragging = false;
 	this.myInput2.dragging = false;
@@ -89,7 +83,6 @@ function MakeOperator(type) {
 	// Right now activates mode-switch chooser,
 	// and reversals are handled by a function at the sketch level
 	if(!this.collapsed){
-	    
 	    // want to give control to input 1, currently bound and not stacked
 	    if (this.myInput1.over && !this.myInput1.free && !this.myInput1.inStack){
 		//top level reversal boolean
@@ -424,4 +417,3 @@ function compareShifts(neg,pos) {
 	return 0;
     }
 }
-
