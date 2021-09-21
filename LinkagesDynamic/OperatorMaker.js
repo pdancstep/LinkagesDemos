@@ -165,13 +165,13 @@ function MakeOperator(type) {
 		this.myInput1.free = false;
 		this.myInput2.free = true;
           	this.myOutput.free = true;
-        	oper.mode = REVERSE1;
+        	this.mode = REVERSE1;
 	    // giving up control of input 2
 	    }else if (this.myInput2.over && this.myInput2.free){
           	this.myInput1.free = true;
 		this.myInput2.free = false;
           	this.myOutput.free = true;	
-        	oper.mode = REVERSE2;
+        	this.mode = REVERSE2;
 	    // giving up control of output
 	    }else if (this.myOutput.over && this.myOutput.free){
           	this.myInput1.free = true;
@@ -204,9 +204,9 @@ function MakeOperator(type) {
 	this.myOutput.update();
 	
 	for (i=0; i<iterations; i++){
-	    if (type==0){
+	    if (type==ADDER){
 		this.propagateOutputSum();
-	    } else if (type==1){
+	    } else if (type==MULTIPLIER){
 		this.propagateOutputProd();
 	    }
 	}	

@@ -29,7 +29,7 @@ function MakeBinding(node1,node2){
     // function to decide if updated binding is free
     this.amIFree = function(){
   	//assume to be free...
-  	this.free = true
+  	this.free = true;
   	//then check for exceptions...
   	for (const node of this.myStack){
   	    if (!node.free){
