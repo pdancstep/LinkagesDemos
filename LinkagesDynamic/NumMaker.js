@@ -26,9 +26,9 @@ function MakeNumber(xPos,yPos,free){
     // notify this point that it has been clicked
     this.clickMe = function(){
 	if (this.over && this.free && !this.inStack){
-	    this.dragging = true
+	    this.dragging = true;
 	}
-	// where does this.dragging get turned back off?
+	return this.dragging;
     }
 
     // if we're dragging this point, move its location to the mouse's location

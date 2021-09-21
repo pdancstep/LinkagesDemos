@@ -40,7 +40,6 @@ var updateCycles = 3;
 
 
 function draw() {
-
     //manage double tap
     if(tappedOnce){
 	if((millis()-currentTime)>doubleTapTimer){
@@ -55,9 +54,9 @@ function draw() {
   	}
     }
     
-    //update nodes and bindings multiple times, so they have a chance to react to each other...
+    // update nodes and bindings multiple times,
+    // so they have a chance to react to each other...
     for (m=0; m<updateCycles; m++){
-	
 	//update components on board
 	for (const oper of myOperators) {
 	    oper.overMe();
@@ -298,56 +297,58 @@ function axisToPixelY(coord) {
     return (height/2) - (coord * 50);
 }
 
-function touchStarted() {
-    if (reversingOperator){
-	for (const oper of myOperators){
-	    if (oper.beingReversed){
+function completeReversal() {
+    for (const oper of myOperators){
+	if (oper.beingReversed){
+	    // giving up control of input 1
+	    if (oper.myInput1.over && oper.myInput1.free){
+		oper.myInput1.free = false;
 		
-		// giving up control of input 1
-		if (oper.myInput1.over && oper.myInput1.free){
-		    oper.myInput1.free = false;
-		    
-		    if (!oper.myInput2.free){
-          		oper.myInput2.free = true;
-        	    }else if (!oper.myOutput.free){
-          		oper.myOutput.free = true;
-        	    }
-		    
-        	    oper.reverseMode1 = true;
-        	    oper.reverseMode2 = false;
-		    
-		}
+		if (!oper.myInput2.free){
+          	    oper.myInput2.free = true;
+        	}else if (!oper.myOutput.free){
+          	    oper.myOutput.free = true;
+        	}
 		
-		// giving up control of input 2
-		if (oper.myInput2.over && oper.myInput2.free){
-		    oper.myInput2.free = false;
-		    
-		    if (!oper.myInput1.free){
-          		oper.myInput1.free = true;
-        	    }else if (!oper.myOutput.free){
-          		oper.myOutput.free = true;
-        	    }
-		    
-        	    oper.reverseMode1 = false;
-        	    oper.reverseMode2 = true;
-		    
-		}
+        	oper.reverseMode1 = true;
+        	oper.reverseMode2 = false;
+	    }
+	    
+	    // giving up control of input 2
+	    if (oper.myInput2.over && oper.myInput2.free){
+		oper.myInput2.free = false;
 		
-		// giving up control of output
-		if (oper.myOutput.over && oper.myOutput.free){
-		    oper.myOutput.free = false;
-		    
-		    if (!oper.myInput1.free){
-          		oper.myInput1.free = true;
-        	    }else if (!oper.myInput2.free){
-          		oper.myInput2.free = true;
-        	    }
-		    
-        	    oper.reverseMode1 = false;
-        	    oper.reverseMode2 = false;
-		}
+		if (!oper.myInput1.free){
+          	    oper.myInput1.free = true;
+        	}else if (!oper.myOutput.free){
+          	    oper.myOutput.free = true;
+        	}
+		
+        	oper.reverseMode1 = false;
+        	oper.reverseMode2 = true;
+	    }
+	    
+	    // giving up control of output
+	    if (oper.myOutput.over && oper.myOutput.free){
+		oper.myOutput.free = false;
+		
+		if (!oper.myInput1.free){
+          	    oper.myInput1.free = true;
+        	}else if (!oper.myInput2.free){
+          	    oper.myInput2.free = true;
+        	}
+		
+        	oper.reverseMode1 = false;
+        	oper.reverseMode2 = false;
 	    }
 	}
+	oper.beingReversed = false;
+    }
+}
+
+function touchStarted() {
+    if (reversingOperator){
+	completeReversal();
 	reversingOperator = false;
     }
     
@@ -365,7 +366,6 @@ function touchStarted() {
 	tappedOnce = true;
 	currentTime = millis();
     }else{
-	
 	//empty freeNode and intermediateNode arrays...
 	freeNodes = [];
 	intermediateReversals = [];
@@ -382,24 +382,30 @@ function touchStarted() {
 	}
 	tappedOnce = false;
     }
-    
+
+    let draggingSomething = false;
     for (const oper of myOperators){
 	//draggable node?
-	oper.clickMe();
-	//if we found a draggable node, stop looking
-	if (oper.dragging){
+	if (oper.clickMe()) {
+	    draggingSomething = true;
+	    //if we found a draggable node, stop looking
 	    break;
 	}
     }
-    
-    // FIX: opt out if a number is getting dragged,
-    // so we don't get nodes stuck to numbers?
-    for (const stck of myBindings){
-	//draggable node?
-	stck.clickMe();
-	//if we found a draggable node, stop looking
-	if(stck.dragging){
-	    break;
+    // hmm this doesn't achieve what I thought it would -J
+    if (!draggingSomething){
+	// FIX: opt out if a number is getting dragged,
+	// so we don't get nodes stuck to numbers?
+	//
+	// ^ what's this comment about? did I accomplish it by
+	// wrapping the "if (!draggingSomething)" around this loop? -J
+	for (const stck of myBindings){
+	    //draggable node?
+	    if (stck.clickMe()) {
+		draggingSomething = true;
+		//if we found a draggable node, stop looking
+		break;
+	    }
 	}
     }
 }

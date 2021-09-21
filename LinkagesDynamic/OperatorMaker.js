@@ -29,12 +29,12 @@ function MakeOperator(type) {
     this.beingReversed = false;
     
     
-    //booleans for collapsed operator and its forward/backward kinematics...
+    //booleans for collapsed operator and its forward/backward kinematics
     this.collapsed = false;
     this.reverseCollapsed = false;
     
     
-    //checks each of its inputs to see if the mouse is currently hovering over...
+    //checks each of its inputs to see if the mouse is currently hovering over
     this.overMe = function(){
 	return (this.myInput1.overMe() ||
 		this.myInput2.overMe() ||
@@ -47,22 +47,29 @@ function MakeOperator(type) {
 		this.myOutput === node);
     }
     
-    //checks to see if mouse is over any nodes
+    //checks to see if mouse is over any free nodes
     this.clickMe = function(){
-
-	// why is checking input2 here dependent on input1,
-	// but checking output isn't?
-	this.myInput1.clickMe();
-	//give drag priority to input 1
-	if (!this.myInput1.dragging){
-	    this.myInput2.clickMe();
-	}
-	this.myOutput.clickMe();
-	
-	if (this.myInput1.dragging ||
-	    this.myInput2.dragging ||
-	    this.myOutput.dragging){
-	    this.dragging = true;
+	if (this.reverseMode1) {
+	    if (this.myInput2.clickMe()) {
+		this.dragging = true;
+		return true;
+	    }else{
+		return this.myOutput.clickMe();
+	    }
+	}else if (this.reverseMode2){
+	    if (this.myInput1.clickMe()) {
+		this.dragging = true;
+		return true;
+	    }else{
+		return this.myOutput.clickMe();
+	    }
+	}else{
+	    if (this.myInput1.clickMe()) {
+		this.dragging = true;
+		return true;
+	    }else{
+		return this.myInput2.clickMe();
+	    }
 	}	
     }
 
@@ -75,19 +82,16 @@ function MakeOperator(type) {
 	this.dragging = false;
     }
     
-    // double click on nodes to control dependencies...
+    // double click on nodes to control dependencies
     this.reverseOperator = function(){
 	
-	// Mode changes for uncollapsed adder...
+	// Mode changes for uncollapsed adder
 	// Right now activates mode-switch chooser,
-	// and reversals are handled by a function at the sketch level...
+	// and reversals are handled by a function at the sketch level
 	if(!this.collapsed){
 	    
 	    // want to give control to input 1, currently bound and not stacked
-	    if (this.myInput1.over &&
-		!this.myInput1.free &&
-		!this.myInput1.inStack){
-		
+	    if (this.myInput1.over && !this.myInput1.free && !this.myInput1.inStack){
 		//top level reversal boolean
 		reversingOperator = true;
 		//local reversal boolean
@@ -98,10 +102,7 @@ function MakeOperator(type) {
 	    }
 
 	    // want to give control to input 2, currently bound and not stacked
-	    if (this.myInput2.over &&
-		!this.myInput2.free &&
-		!this.myInput2.inStack){
-		
+	    if (this.myInput2.over && !this.myInput2.free && !this.myInput2.inStack){
 		//top level reversal boolean
 		reversingOperator = true;
 		//local reversal boolean
@@ -112,10 +113,7 @@ function MakeOperator(type) {
 	    }
 	    
 	    // want to give control to output, currently bound and not stacked
-	    if(this.myOutput.over &&
-	       !this.myOutput.free &&
-	       !this.myOutput.inStack){
-		
+	    if(this.myOutput.over && !this.myOutput.free && !this.myOutput.inStack){
 		//top level reversal boolean
 		reversingOperator = true;
 		//local reversal boolean
@@ -126,7 +124,7 @@ function MakeOperator(type) {
 	    }	    
 	}else{
 	    // mode changes for collapsed adder
-	    // (which are automatic, so don't need the sketch level function...)
+	    // (which are automatic, so don't need the sketch level function)
 	    
 	    //double click on input1
 	    if (this.myInput1.over && !this.myInput1.free){
@@ -156,7 +154,7 @@ function MakeOperator(type) {
     }
     
     this.update = function(){
-	//check if this operator is being collapsed via press-and-hold...
+	//check if this operator is being collapsed via press-and-hold
 	if(this.myInput1.over && this.myInput2.over){
 	    if(pressAndHold){
 		if((millis()-timerStart)>holdLength){
@@ -206,7 +204,7 @@ function MakeOperator(type) {
 		//...same for up or down movement...
 		upperY = (iout + searchSize) - (i1 + i2);
 		lowerY = (iout - searchSize) - (i1 + i2);
-		//decide whether/where to shift ouput position...
+		//decide whether/where to shift ouput position.
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
@@ -271,7 +269,7 @@ function MakeOperator(type) {
 		//...same for up or down movement...
 		upperY = (iout + searchSize) - iprod;
 		lowerY = (iout - searchSize) - iprod;
-		//decide whether/where to shift ouput position...
+		//decide whether/where to shift ouput position.
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 		
@@ -312,7 +310,6 @@ function MakeOperator(type) {
 		this.myOutput.shiftPx(compareShifts(leftX, rightX),
 				      compareShifts(upperY, lowerY));
 	    }else{
-
 		// NOTE: unlike the above searches, where we just ignore input2,
 		// in this case we start each iteration by
 		// moving the "invisible" input2 to towards input1,

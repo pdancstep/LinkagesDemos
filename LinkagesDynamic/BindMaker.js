@@ -19,6 +19,7 @@ function MakeBinding(node1,node2){
 	if (this.over && this.free){
 	    this.dragging = true;
 	}
+	return this.dragging;
     }
 
     this.allFalse = function(){
