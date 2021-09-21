@@ -295,46 +295,11 @@ function axisToPixelY(coord) {
     return (height/2) - (coord * 50);
 }
 
-function finishReversal() {
-    for (const oper of myOperators){
-	if (oper.beingReversed){
-	    // giving up control of input 1
-	    if (oper.myInput1.over && oper.myInput1.free){
-		oper.myInput1.free = false;
-		oper.myInput2.free = true;
-          	oper.myOutput.free = true;
-		
-        	oper.reverseMode1 = true;
-        	oper.reverseMode2 = false;
-	    }
-	    
-	    // giving up control of input 2
-	    if (oper.myInput2.over && oper.myInput2.free){
-          	oper.myInput1.free = true;
-		oper.myInput2.free = false;
-          	oper.myOutput.free = true;
-        			
-        	oper.reverseMode1 = false;
-        	oper.reverseMode2 = true;
-	    }
-	    
-	    // giving up control of output
-	    if (oper.myOutput.over && oper.myOutput.free){
-          	oper.myInput1.free = true;
-          	oper.myInput2.free = true;
-		oper.myOutput.free = false;
-		
-        	oper.reverseMode1 = false;
-        	oper.reverseMode2 = false;
-	    }
-	}
-	oper.beingReversed = false;
-    }
-}
-
 function touchStarted() {
     if (reversingOperator){
-	finishReversal();
+	for (const oper of myOperators){
+	    oper.finishReversal();
+	}
 	reversingOperator = false;
     }
     
