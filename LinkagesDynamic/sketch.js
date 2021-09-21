@@ -304,10 +304,10 @@ function touchStarted() {
     }
     
     if(dist(mouseX,mouseY,30,30)<10){
-	myOperators.push(new MakeOperator(0));
+	myOperators.push(new MakeOperator(ADDER));
     }
     if(dist(mouseX,mouseY,30,60)<10){
-	myOperators.push(new MakeOperator(1));
+	myOperators.push(new MakeOperator(MULTIPLIER));
     }
     
     pressAndHold = true;

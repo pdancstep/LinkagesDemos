@@ -10,12 +10,14 @@ const COLLAPSED = 3;
 const REVCOLLAPSED = 4;
 
 function MakeOperator(type) {
+
+    this.type = type;
     
-    if(type==ADDER){
+    if(this.type==ADDER){
 	this.myInput1 = new MakeNumber(0,0,true);
 	this.myInput2 = new MakeNumber(0,0,true);
 	this.myOutput = new MakeNumber(0,0,false);
-    }else if(type==MULTIPLIER){
+    }else if(this.type==MULTIPLIER){
 	this.myInput1 = new MakeNumber(1,0,true);
 	this.myInput2 = new MakeNumber(1,0,true);
 	this.myOutput = new MakeNumber(1,0,false);
@@ -204,9 +206,9 @@ function MakeOperator(type) {
 	this.myOutput.update();
 	
 	for (i=0; i<iterations; i++){
-	    if (type==ADDER){
+	    if (this.type==ADDER){
 		this.propagateOutputSum();
-	    } else if (type==MULTIPLIER){
+	    } else if (this.type==MULTIPLIER){
 		this.propagateOutputProd();
 	    }
 	}	
@@ -297,7 +299,7 @@ function MakeOperator(type) {
 	    let rquot = ((rout * r2) + (iout * i2)) / denominator;
 	    let iquot = ((iout * r2) - (rout * i2)) / denominator;
 	    
-	    let leftX = (r1 - searchSize) - rqout;
+	    let leftX = (r1 - searchSize) - rquot;
 	    let rightX = (r1 + searchSize) - rquot;
 	    let upperY = (i1 + searchSize) - iquot;
 	    let lowerY = (i1 - searchSize) - iquot;
@@ -345,7 +347,7 @@ function MakeOperator(type) {
 	if (this.mode==DEFAULT || this.mode==REVERSE1 || this.mode==REVERSE2){
 	    // display for uncollapsed operator...
 	    
-	    if(type==ADDER){      
+	    if(this.type==ADDER){      
 		// parallelogram      
 		noFill();
 		stroke(30,200,225);
@@ -364,7 +366,7 @@ function MakeOperator(type) {
 		fill(30,200,255);
 		this.myOutput.display();
 		
-	    }else if(type==MULTIPLIER){
+	    }else if(this.type==MULTIPLIER){
 		// lines
 		noFill();
 		strokeWeight(1);
@@ -387,7 +389,7 @@ function MakeOperator(type) {
 	    }
 	    
 	}else{ // display for collapsed operator...
-	    if(type==ADDER){
+	    if(this.type==ADDER){
 		noFill();
 		stroke(30,200,225);
 		strokeWeight(1);
@@ -400,7 +402,7 @@ function MakeOperator(type) {
 		fill(30,200,255);
 		this.myOutput.display();
 		
-	    }else if(type==MULTIPLIER){
+	    }else if(this.type==MULTIPLIER){
 		// lines for square and root
 		noFill();
 		stroke(255,0,0);
