@@ -411,39 +411,6 @@ function MakeOperator(type) {
 	    }
 	}
     }
-    
-    //maybe defining this at the level of the number?
-    this.freeNodeDisplay = function(){
-	noStroke();
-	
-	if(this.myInput1.free){
-	    if(type==0){
-		fill(200,255,255);
-	    }else{
-		fill(255,100,0);
-	    }
-	    ellipse(this.myInput1.getRealPx(), this.myInput1.getImaginaryPx(),
-		    15, 15);
-	}
-	if(this.myInput2.free){
-	    if(type==0){
-		fill(200,255,255);
-	    }else{
-		fill(255,100,0);
-	    }
-	    ellipse(this.myInput2.getRealPx(), this.myInput2.getImaginaryPx(),
-		    15, 15);
-	}
-	if(this.myOutput.free){
-	    if(type==0){
-		fill(30,200,255);
-	    }else{
-		fill(255,0,0);
-	    }
-	    ellipse(this.myOutput.getRealPx(), this.myOutput.getImaginaryPx(),
-		    15, 15);
-	}
-    }
 }
 
 //compares nearby points to see if its profitable to move in a given direction,
