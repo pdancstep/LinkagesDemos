@@ -129,6 +129,21 @@ function draw() {
 
 var indicatorFlash = false;
 
+function findNewBind_rewrite_incomplete() {
+    //variables defining first two nodes available for binding...
+    let bindingNode1;
+    let bindingNode2;
+
+    //initialize that we're looking for first bind
+    let lookingForFirstBind = true;
+    //..and that our search is not yet complete
+    let completedBind = false;
+
+    function attemptBind(node) {
+	
+    }
+}
+
 //function that searches for two uncoupled nodes to bind and initiate a new stack...
 function findNewBind(){
 
