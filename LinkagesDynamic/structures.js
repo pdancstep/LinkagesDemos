@@ -5,6 +5,7 @@ var myOperators = [];
 
 // nodes to potentially give up control of when in reversal mode
 var freeNodes = [];
+var freeNodePaths = [];
 var reversingOperator = false;
 
 function registerNode(node) {
@@ -12,7 +13,9 @@ function registerNode(node) {
 }
 
 function registerOperator(oper) {
+    let i = myOperators.length;
     myOperators.push(oper);
+    return i; 
 }
 
 function mergeNodes(idx1, idx2) {

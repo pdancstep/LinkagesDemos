@@ -9,6 +9,11 @@ const REVERSE2 = 2;
 const COLLAPSED = 3;
 const REVCOLLAPSED = 4;
 
+// path labels
+const OUTPUT = 0;
+const INPUT1 = 1;
+const INPUT2 = 2;
+
 class Operator {
     constructor(type) {
 	this.type = type;
@@ -32,7 +37,7 @@ class Operator {
 	//boolean marking that this operator is in the process of being reversed
 	this.beingReversed = false;
 
-	registerOperator(this);
+	this.myindex = registerOperator(this);
     }
 
     //checks each of its inputs to see if the mouse is currently hovering over
@@ -81,10 +86,10 @@ class Operator {
     }
 
     // release mouse
-    allFalse() {
-	this.myInput1.dragging = false;
-	this.myInput2.dragging = false;
-	this.myOutput.dragging = false;
+    notifyRelease() {
+	this.myInput1.notifyRelease();
+	this.myInput2.notifyRelease();
+	this.myOutput.notifyRelease();
 	
 	this.dragging = false;
     }
@@ -105,12 +110,96 @@ class Operator {
 	    // should not get here
 	}
     }
+
+    // send information about free nodes originating from this operator
+    // to the global freeNodes & freeNodePaths arrays
+    // visited: array of booleans corresponding to myOperators
+    // path: directions to get here
+    registerFreeNodes(visited, path) {
+	// don't search this operator again if we've already been here
+	if (visited[this.myindex]) { return; }
+	visited[this.myindex] = true;
+
+	// if we are in a mode where myInput1 is free w.r.t. this operator...
+	if (this.mode==DEFAULT || this.mode==REVERSE2 || this.mode==COLLAPSED) {
+	    // ...build a path appending this operator, and then...
+	    let newpath = path.slice();
+	    newpath.push(this);
+	    if (this.myInput1.free) {
+		// ...if myInput1 is indeed free, register this path.
+		newpath.push(INPUT1);
+		freeNodes.push(this.myInput1);
+		freeNodePaths.push(newpath);
+	    }else{
+		// ...if myInput1 is bound elsewhere, search that operator.
+		this.myInput1.controller.registerFreeNodes(visited, newpath);
+	    }
+	}
+
+	// modes where myInput2 is free w.r.t this operator
+	if (this.mode==DEFAULT || this.mode==REVERSE1) {
+	    let newpath = path.slice();
+	    newpath.push(this);
+	    if (this.myInput2.free) {
+		newpath.push(INPUT2);
+		freeNodes.push(this.myInput2);
+		freeNodePaths.push(newpath);
+	    }else{
+		this.myInput2.controller.registerFreeNodes(visited, newpath);
+	    }
+	}
+
+	// modes where myOutput is free w.r.t. this operator
+	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.REVCOLLAPSED) {
+	    let newpath = path.slice();
+	    newpath.push(this);
+	    if (this.myOutput.free) {
+		newpath.push(OUTPUT);
+		freeNodes.push(this.myOutput);
+		freeNodePaths.push(newpath);
+	    }else{
+		this.myOutput.controller.registerFreeNodes(visited, newpath);
+	    }
+	}
+    }
     
     // double click on nodes to control dependencies
+    // returns true if a reversal was initiated, false if none was possible
+    // if true, the global mode variable reversingOperator indicates whether
+    // the reversal that was initiated is still in progress awaiting user input
     reverseOperator() {
-	// TODO
+	// error check
+	if (freeNodes.length > 0 || freeNodePaths.length > 0) {
+	    // global arrays are already in use; something is wrong
+	    return false;
+	}
+	
+	switch (this.mode) {
+	case DEFAULT:
+	    // want to give control to output
+	    if (this.myOutput.over) {
+		// search for free nodes
+		let visits = myOperators.map(_ => false);
+		let path = [];
+		this.registerFreeNodes(visits, path);
+		if (freeNodes.length > 1) {
+		    // multiple options for a free node to give up:
+		    // enter global reversal mode to let the user choose
+		    reversingOperator = true;
+		    this.beingReversed = true;
+		    return true;
+		}else if (freeNodes.length == 1) {
+		    this.beingReversed = true;
+		    this.finishReversal();
+		}else{
+		    // didn't find any way to reverse; nothing left to do
+		    return false;
+		}
+	    }
+	}
     }
 
+    // close out in-progress reversal after user selects node to give up control of
     finishReversal() {
 	// TODO
     }

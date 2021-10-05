@@ -3,10 +3,13 @@ class Number {
 	// position of point
 	this.real = x;
 	this.imaginary = y;
+	
 	// is this point user-movable?
 	this.free = free;
 	// which operator relations have this point as a member?
 	this.operators = [op];
+	// if this is a bound (dependent) node, which operator controls it?
+	this.controller = this.free ? false : op;	    
 
 	this.dragging = false;
 	this.mouseover = false;
@@ -32,6 +35,11 @@ class Number {
 	return this.dragging;
     }
 
+    // release mouse
+    notifyRelease() {
+	this.dragging = false;
+    }
+
     // if we're dragging this point, move its location to the mouse's location
     update() {
 	if (this.dragging){
@@ -46,7 +54,7 @@ class Number {
 	ellipse(axisToPixelX(this.real), axisToPixelY(this.imaginary), 15, 15);
     }
 
-        // draw the encircling ring used to indicate free node draggability
+    // draw the encircling ring used to indicate free node draggability
     drawRing() {
 	noFill();
 	stroke(255,200);
