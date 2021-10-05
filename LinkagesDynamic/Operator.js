@@ -177,7 +177,7 @@ class Operator {
 	switch (this.mode) {
 	case DEFAULT:
 	    // want to give control to output
-	    if (this.myOutput.over) {
+	    if (this.myOutput.mouseover) {
 		// search for free nodes
 		let visits = myOperators.map(_ => false);
 		let path = [];
@@ -191,17 +191,29 @@ class Operator {
 		}else if (freeNodes.length == 1) {
 		    this.beingReversed = true;
 		    this.finishReversal();
+		    return true;
 		}else{
 		    // didn't find any way to reverse; nothing left to do
 		    return false;
 		}
 	    }
+	    return false;
+	case TODO:
 	}
     }
 
     // close out in-progress reversal after user selects node to give up control of
     finishReversal() {
 	// TODO
+	let path = freeNodePaths[whatever];
+	let argument = path.pop();
+	let operator = path.pop();
+	if (operator.beingReversed) {
+	}
+	else {
+	    
+	    finishReversal()
+	}
     }
     
     update() {
@@ -254,34 +266,34 @@ class Operator {
 	    break;
 	    
 	case REVERSE1: 
-	    let leftX = (r1 - searchSize) - (rout - r2);
-	    let rightX = (r1 + searchSize) - (rout - r2);
-	    let upperY = (i1 + searchSize) - (iout - i2);
-	    let lowerY = (i1 - searchSize) - (iout - i2);
+	    leftX = (r1 - searchSize) - (rout - r2);
+	    rightX = (r1 + searchSize) - (rout - r2);
+	    upperY = (i1 + searchSize) - (iout - i2);
+	    lowerY = (i1 - searchSize) - (iout - i2);
 	    movingNode = this.myInput1;
 	    break;
 	    
 	case REVERSE2: 
-	    let leftX = (r2 - searchSize) - (rout - r1);
-	    let rightX = (r2 + searchSize) - (rout - r1);
-	    let upperY = (i2 + searchSize) - (iout - i1);
-	    let lowerY = (i2 - searchSize) - (iout - i1);
+	    leftX = (r2 - searchSize) - (rout - r1);
+	    rightX = (r2 + searchSize) - (rout - r1);
+	    upperY = (i2 + searchSize) - (iout - i1);
+	    lowerY = (i2 - searchSize) - (iout - i1);
 	    movingNode = this.myInput2;
 	    break;
 	    
 	case COLLAPSED: 
-	    let leftX = (rout - searchSize) - (r1 * 2);
-	    let rightX = (rout + searchSize) - (r1 * 2);
-	    let upperY = (iout + searchSize) - (i1 * 2);
-	    let lowerY = (iout - searchSize) - (i1 * 2);
+	    leftX = (rout - searchSize) - (r1 * 2);
+	    rightX = (rout + searchSize) - (r1 * 2);
+	    upperY = (iout + searchSize) - (i1 * 2);
+	    lowerY = (iout - searchSize) - (i1 * 2);
 	    movingNode = this.myOutput;
 	    break;
 	    
 	case REVCOLLAPSED: 
-	    let leftX = (r1 - searchSize) - (rout / 2);
-	    let rightX = (r1 + searchSize) - (rout / 2);
-	    let upperY = (i1 + searchSize) - (iout / 2);
-	    let lowerY = (i1 - searchSize) - (iout / 2);
+	    leftX = (r1 - searchSize) - (rout / 2);
+	    rightX = (r1 + searchSize) - (rout / 2);
+	    upperY = (i1 + searchSize) - (iout / 2);
+	    lowerY = (i1 - searchSize) - (iout / 2);
 	    movingNode = this.myInput1;
 	    break;
 

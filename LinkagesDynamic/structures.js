@@ -15,7 +15,7 @@ function registerNode(node) {
 function registerOperator(oper) {
     let i = myOperators.length;
     myOperators.push(oper);
-    return i; 
+    return i;
 }
 
 function findMerge() {
@@ -25,7 +25,7 @@ function findMerge() {
     // find two nodes to bind together
     for (let i=0; i < myNumbers.length; i++) {
 	let node = myNumbers[i];
-	if (!completedBind && node.checkMouseover()) {
+	if (node.checkMouseover()) {
 	    if (first===false) {
 		first = i;
 	    } else if (mergeNodes(first, i)) {
