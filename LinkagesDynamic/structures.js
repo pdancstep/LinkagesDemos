@@ -18,7 +18,26 @@ function registerOperator(oper) {
     return i; 
 }
 
+function findMerge() {
+    // index of first bindable node we find
+    let first = false;
+
+    // find two nodes to bind together
+    for (let i=0; i < myNumbers.length; i++) {
+	let node = myNumbers[i];
+	if (!completedBind && node.checkMouseover()) {
+	    if (first===false) {
+		first = i;
+	    } else if (mergeNodes(first, i)) {
+		indicatorFlash = true;
+		return;
+	    }
+	}
+    }
+}
+
 // combine two nodes (essentially, add the second node's properties to the first)
+// returns true if a merge was successfully performed
 function mergeNodes(idx1, idx2) {
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
@@ -46,12 +65,14 @@ function mergeNodes(idx1, idx2) {
 		oper.myOutput = node1;
 	    }
 	}
+	// TODO: check if we've created a collapsed operator
+	
 	// add node2's former operators to node1's operators
 	node1.operators = node1.operators.concat(node2.operators);
 	
 	// remove node2 from the graph
 	myNumbers.splice(idx2, 1);
-	return node1;
+	return true;
     } else {
 	// cannot merge: both nodes already dependent
 	return false;

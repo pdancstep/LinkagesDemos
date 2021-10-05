@@ -64,6 +64,7 @@ class Number {
     
     // externally-used display function
     display() {
+	// TODO: change color if merged node?
 	this.drawNode();
 	if (this.free){
 	    this.drawRing();
