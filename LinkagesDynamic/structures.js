@@ -18,10 +18,22 @@ function registerOperator(oper) {
     return i; 
 }
 
+// combine two nodes (essentially, add the second node's properties to the first)
 function mergeNodes(idx1, idx2) {
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
     if (node1.free || node2.free) {
+	// dependency
+	if (!node2.free) {
+	    // node1 is free but node2 is bound
+	    // replace node1's dependency info with node 2's
+	    node1.free = false;
+	    node1.controller = node2.controller;
+	}else{
+	    // either both are free or node1 is bound and node2 is free
+	    // we keep node1's dependency info, so there's nothing to do here
+	}
+	
 	// replace node2 with node1 in all of node2's operators
 	for (oper of node2.operators) {
 	    if (oper.myInput1 === node2) {
@@ -37,9 +49,6 @@ function mergeNodes(idx1, idx2) {
 	// add node2's former operators to node1's operators
 	node1.operators = node1.operators.concat(node2.operators);
 	
-	// merged node is free iff both parents were free
-	node1.free = node1.free && node2.free;
-
 	// remove node2 from the graph
 	myNumbers.splice(idx2, 1);
 	return node1;
