@@ -78,3 +78,23 @@ function mergeNodes(idx1, idx2) {
 	return false;
     }
 }
+
+function tryReversal() {
+    let rev = false;
+    for (const oper of myOperators) {
+	rev = oper.reverseOperator();
+	if (rev) break;
+    }
+    if (rev && !reversingOperator) {
+	closeReversal();
+    }
+}
+
+function closeReversal() {
+    for (const oper of myOperators){
+	oper.finishReversal();
+    }
+    reversingOperator = false;
+    freeNodes = [];
+    freeNodePaths = [];
+}

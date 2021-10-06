@@ -29,7 +29,7 @@ class Number {
     // tell the number that it has been clicked on.
     // returns the current dragging state
     notifyClick() {
-	if (this.over && this.free) {
+	if (this.mouseover && this.free) {
 	    this.dragging = true;
 	}
 	return this.dragging;
