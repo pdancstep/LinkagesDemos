@@ -125,10 +125,10 @@ function touchStarted() {
     }
     
     if (dist(mouseX,mouseY,30,30)<10){
-	myOperators.push(new Operator(ADDER));
+	new Operator(ADDER);
     }
     if (dist(mouseX,mouseY,30,60)<10){
-	myOperators.push(new Operator(MULTIPLIER));
+	new Operator(MULTIPLIER);
     }
     
     pressAndHold = true;

@@ -33,7 +33,9 @@ class Operator {
 	
 	//boolean that reports if one of this operator's nodes is being dragged
 	this.dragging = false;
-	
+
+	// index in myOperators. used for convenience when checking if a
+	// search for free nodes has visited this operator before
 	this.myindex = registerOperator(this);
     }
 
@@ -121,7 +123,7 @@ class Operator {
 	}
 
 	// modes where myOutput is free w.r.t. this operator
-	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.REVCOLLAPSED) {
+	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.mode==REVCOLLAPSED) {
 	    let newpath = path.slice();
 	    newpath.push(this);
 	    if (this.myOutput.free) {
@@ -227,8 +229,21 @@ class Operator {
 	    }
 	    break;
 	case COLLAPSED:
+	    if (arg==INPUT1 && this.myInput1.free) {
+		this.myInput1.free = false;
+		this.myInput1.controller = this;
+		this.myOutput.free = true;
+		this.myOutput.controller = false;
+		this.mode = REVCOLLAPSED;
+	    }
 	case REVCOLLAPSED:
-	    // TODO
+	    if (arg==OUTPUT && this.myOutput.free) {
+		this.myOutput.free = false;
+		this.myOutput.controller = this;
+		this.myInput1.free = true;
+		this.myInput1.controller = false;
+		this.mode = COLLAPSED;
+	    }
 	default:
 	    // should not get here
 	}
