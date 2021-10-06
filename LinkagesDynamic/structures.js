@@ -41,6 +41,7 @@ function findMerge() {
 function mergeNodes(idx1, idx2) {
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
+    
     if (node1.free || node2.free) {
 	// dependency
 	if (!node2.free) {
@@ -55,17 +56,12 @@ function mergeNodes(idx1, idx2) {
 	
 	// replace node2 with node1 in all of node2's operators
 	for (oper of node2.operators) {
-	    if (oper.myInput1 === node2) {
-		oper.myInput1 = node1;
-	    }
-	    if (oper.myInput2 === node2) {
-		oper.myInput2 = node1;
-	    }
-	    if (oper.myOutput === node2) {
-		oper.myOutput = node1;
+	    if (node1.operators.includes(oper)) {
+		oper.collapse(node1, node2);
+	    }else{
+		oper.replace(node1, node2);
 	    }
 	}
-	// TODO: check if we've created a collapsed operator
 	
 	// add node2's former operators to node1's operators
 	node1.operators = node1.operators.concat(node2.operators);

@@ -250,21 +250,7 @@ class Operator {
     }
     
     update() {
-	//check if this operator is being collapsed via press-and-hold
-	if (this.myInput1.mouseover && this.myInput2.mouseover) {
-	    if (pressAndHold) {
-		if ((millis()-timerStart)>holdLength) {
-		    indicatorFlash = true;
-		    pressAndHold = false;
-		    this.mode = COLLAPSED;
-		    this.myInput1.free = true;
-		    this.myOutput.free = false;
-		    // what happens to input 2 here?
-		}
-	    }
-	}
-	
-	//update possibly dragging numbers
+	// update possibly dragging numbers
 	this.myInput1.update();
 	this.myInput2.update();
 	this.myOutput.update();
@@ -276,6 +262,50 @@ class Operator {
 		this.propagateOutputProd();
 	    }
 	}	
+    }
+
+    // if node1 and node2 are both arguments, switch to appropriate collapsed mode
+    // call only from mergeNodes in structures.js
+    collapse(node1, node2) {
+	if (node1===this.myInput1) {
+	    if (node2===this.myInput2) {
+		this.mode = COLLAPSED;
+		this.myInput2 = node1;
+	    }
+	    if (node2===this.myOutput) {
+		// TODO: "identity" mode
+	    }
+	} else if (node1===this.myInput2) {
+	    if (node2===this.myInput1) {
+		this.mode = COLLAPSED;
+		this.myInput1 = node1;
+	    }
+	    if (node2===this.myOutput) {
+		// TODO: "identity" mode
+	    }
+	} else if (node1===this.myOutput) {
+	    if (node2===this.myInput1 || node2===this.myInput2) {
+		// TODO: "identity" mode
+	    }
+	}
+	if (this.mode==COLLAPSED) {
+	    indicatorFlash = true;
+	    // do I need to do anything with free/bound status?
+	}
+    }
+
+    // for any arguments where node2 appears, replace with node2
+    // call only from mergeNodes in structures.js
+    replace(node1, node2) {
+	if (this.myInput1 === node2) {
+	    this.myInput1 = node1;
+	}
+	if (this.myInput2 === node2) {
+	    this.myInput2 = node1;
+	}
+	if (this.myOutput === node2) {
+	    this.myOutput = node1;
+	}
     }
     
     propagateOutputSum() {
@@ -386,13 +416,12 @@ class Operator {
 	    movingNode = this.myInput2;
 	    break;
 	    
-	case REVCOLLAPSED: 
-	    // in this case we start each iteration by
-	    // moving the "invisible" input2 to towards input1,
-	    // and then use that position to update input1 
-	    this.myInput2.shift((r1 - r2)*.4, (i1 - i2)*.4);
-	    r2 = this.myInput2.getReal();
-	    i2 = this.myInput2.getImaginary();
+	case REVCOLLAPSED:
+	    // adjust input in two stages
+	    // (not actually sure how this works -J)
+	    this.myInput1.shift((r1 - r2)*.4, (i1 - i2)*.4);
+	    r2 = this.myInput1.getReal();
+	    i2 = this.myInput1.getImaginary();
 	    
 	    denominator = (r2 * r2) + (i2 * i2);
 	    rquot = ((rout * r2) + (iout * i2)) / denominator;
