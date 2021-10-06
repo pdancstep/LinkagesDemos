@@ -83,23 +83,6 @@ class Operator {
 	this.dragging = false;
     }
 
-    getBoundNode() {
-	switch (this.mode) {
-	case DEFAULT:
-	    return this.myOutput;
-	case REVERSE1:
-	    return this.myInput1;
-	case REVERSE2:
-	    return this.myInput2;
-	case COLLAPSED:
-	    return this.myOutput;
-	case REVCOLLAPSED:
-	    return this.myInput1;
-	default:
-	    // should not get here
-	}
-    }
-
     // send information about free nodes originating from this operator
     // to the global freeNodes & freeNodePaths arrays
     // visited: array of booleans corresponding to myOperators
@@ -161,36 +144,38 @@ class Operator {
 	    // global arrays are already in use; something is wrong
 	    return false;
 	}
-	
-	switch (this.mode) {
-	case DEFAULT:
-	    // want to give control to output
-	    if (this.myOutput.mouseover) {
-		// search for free nodes
-		let visits = myOperators.map(_ => false);
-		let path = [];
-		this.registerFreeNodes(visits, path);
-		if (freeNodes.length > 1) {
-		    // multiple options for a free node to give up:
-		    // enter global reversal mode to let the user choose
-		    reversingOperator = true;
-		    return true;
-		}else if (freeNodes.length == 1) {
-		    reverseByPath(freeNodePaths[0]);
-		    return true;
-		}else{
-		    // didn't find any way to reverse; nothing left to do
-		    return false;
-		}
+
+	// reverse only if user is clicking on the dependent node
+	if ((this.mode == DEFAULT && this.myOutput.mouseover) ||
+	    (this.mode == REVERSE1 && this.myInput1.mouseover) ||
+	    (this.mode == REVERSE2 && this.myInput2.mouseover) ||
+	    (this.mode == COLLAPSED && this.myOutput.mouseover) ||
+	    (this.mode == REVCOLLAPSED && this.myInput1.mouseover)) {
+
+	    // find potential free nodes to take control from
+	    let visits = myOperators.map(_ => false);
+	    let path = [];
+	    this.registerFreeNodes(visits, path);
+
+	    if (freeNodes.length > 1) {
+		// multiple options for a free node to give up:
+		// enter global reversal mode to let the user choose
+		reversingOperator = true;
+		return true;
+	    }else if (freeNodes.length == 1) {
+		reverseByPath(freeNodePaths[0]);
+		return true;
+	    }else{
+		// didn't find any way to reverse; nothing left to do
+		return false;
 	    }
-	    return false;
-	default:
-	    console.log("TODO");
-	    return false;
 	}
+
+	// no reversal was requested here
+	return false;
     }
 
-    // close out in-progress reversal after user selects node to give up control of
+    // close out in-progress reversal, giving up control of indicated argument
     finishReversal(arg) {
 	switch (this.mode) {
 	case DEFAULT:
@@ -203,11 +188,49 @@ class Operator {
 	    }
 	    if (arg==INPUT2 && this.myInput2.free) {
 		this.myInput2.free = false;
-		this.myInput1.controller = this;
+		this.myInput2.controller = this;
 		this.myOutput.free = true;
 		this.myOutput.controller = false;
 		this.mode = REVERSE2;
 	    }
+	    break;
+	case REVERSE1:
+	    if (arg==OUTPUT && this.myOutput.free) {
+		this.myOutput.free = false;
+		this.myOutput.controller = this;
+		this.myInput1.free = true;
+		this.myInput1.controller = false;
+		this.mode = DEFAULT;
+	    }
+	    if (arg==INPUT2 && this.myInput2.free) {
+		this.myInput2.free = false;
+		this.myInput2.controller = this;
+		this.myInput1.free = true;
+		this.myInput1.controller = false;
+		this.mode = REVERSE2;
+	    }
+	    break;
+	case REVERSE2:
+	    if (arg==INPUT1 && this.myInput1.free) {
+		this.myInput1.free = false;
+		this.myInput1.controller = this;
+		this.myInput2.free = true;
+		this.myInput2.controller = false;
+		this.mode = REVERSE1;
+	    }
+	    if (arg==OUTPUT && this.myOutput.free) {
+		this.myOutput.free = false;
+		this.myOutput.controller = this;
+		this.myInput2.free = true;
+		this.myInput2.controller = false;
+		this.mode = DEFAULT;
+	    }
+	    break;
+	case COLLAPSED:
+	case REVCOLLAPSED:
+	    // TODO
+	default:
+	    // should not get here
 	}
     }
     
