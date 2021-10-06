@@ -34,9 +34,6 @@ class Operator {
 	//boolean that reports if one of this operator's nodes is being dragged
 	this.dragging = false;
 	
-	//boolean marking that this operator is in the process of being reversed
-	this.beingReversed = false;
-
 	this.myindex = registerOperator(this);
     }
 
@@ -47,14 +44,6 @@ class Operator {
 		this.myOutput.checkMouseover());
     }
 
-    // does this node belong to this operator?
-    // not sure we still need this
-    owns(node) {
-	return (this.myInput1 === node ||
-		this.myInput2 === node ||
-		this.myOutput === node);
-    }
-    
     //checks to see if mouse is over any free nodes
     notifyClick() {
 	switch (this.mode) {
@@ -124,10 +113,9 @@ class Operator {
 	if (this.mode==DEFAULT || this.mode==REVERSE2 || this.mode==COLLAPSED) {
 	    // ...build a path appending this operator, and then...
 	    let newpath = path.slice();
-	    newpath.push(this);
+	    newpath.push(this, INPUT1);
 	    if (this.myInput1.free) {
 		// ...if myInput1 is indeed free, register this path.
-		newpath.push(INPUT1);
 		freeNodes.push(this.myInput1);
 		freeNodePaths.push(newpath);
 	    }else{
@@ -186,11 +174,9 @@ class Operator {
 		    // multiple options for a free node to give up:
 		    // enter global reversal mode to let the user choose
 		    reversingOperator = true;
-		    this.beingReversed = true;
 		    return true;
 		}else if (freeNodes.length == 1) {
-		    this.beingReversed = true;
-		    this.finishReversal();
+		    reverseByPath(freeNodePaths[0]);
 		    return true;
 		}else{
 		    // didn't find any way to reverse; nothing left to do
@@ -198,21 +184,30 @@ class Operator {
 		}
 	    }
 	    return false;
-	case TODO:
+	default:
+	    console.log("TODO");
+	    return false;
 	}
     }
 
     // close out in-progress reversal after user selects node to give up control of
-    finishReversal() {
-	// TODO
-	let path = freeNodePaths[whatever];
-	let argument = path.pop();
-	let operator = path.pop();
-	if (operator.beingReversed) {
-	}
-	else {
-	    
-	    finishReversal()
+    finishReversal(arg) {
+	switch (this.mode) {
+	case DEFAULT:
+	    if (arg==INPUT1 && this.myInput1.free) {
+		this.myInput1.free = false;
+		this.myInput1.controller = this;
+		this.myOutput.free = true;
+		this.myOutput.controller = false;
+		this.mode = REVERSE1;
+	    }
+	    if (arg==INPUT2 && this.myInput2.free) {
+		this.myInput2.free = false;
+		this.myInput1.controller = this;
+		this.myOutput.free = true;
+		this.myOutput.controller = false;
+		this.mode = REVERSE2;
+	    }
 	}
     }
     

@@ -30,6 +30,8 @@ var holdLength = 700;
 // mode-switch boolean, for going into state of switching a dependency
 var reversingOperator = false;
 
+var indicatorFlash = false;
+
 function draw() {
     //manage double tap
     if(tappedOnce){
@@ -101,8 +103,6 @@ function draw() {
     }   
 }
 
-var indicatorFlash = false;
-
 function pixelToAxisX(coord) {
     return (coord - (width/2)) / 50;
 }
@@ -142,14 +142,8 @@ function touchStarted() {
 	tappedOnce = false;
     }
 
-    let draggingSomething = false;
     for (const oper of myOperators){
-	//draggable node?
-	if (oper.notifyClick()) {
-	    draggingSomething = true;
-	    //if we found a draggable node, stop looking
-	    break;
-	}
+	oper.notifyClick();
     }
 }
 

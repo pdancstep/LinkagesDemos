@@ -79,22 +79,37 @@ function mergeNodes(idx1, idx2) {
     }
 }
 
+// tell each operator to see if it's being asked to perform a reversal
+// if no operator reports a choice is needed from the user, clear freeNode data
 function tryReversal() {
     let rev = false;
     for (const oper of myOperators) {
 	rev = oper.reverseOperator();
 	if (rev) break;
     }
-    if (rev && !reversingOperator) {
-	closeReversal();
+    if (!reversingOperator) {
+	freeNodes = [];
+	freeNodePaths = [];
     }
 }
 
+// check freeNodes for user selection. clear freeNode data.
 function closeReversal() {
-    for (const oper of myOperators){
-	oper.finishReversal();
+    for (let i = 0; i < freeNodes.length; i++) {
+	if (freeNodes[i].checkMouseover()) {
+	    reverseByPath(freeNodePaths[i]);
+	}
     }
     reversingOperator = false;
     freeNodes = [];
     freeNodePaths = [];
+}
+
+// instruct each operator along the designated freeNodePath to reverse
+function reverseByPath(path) {
+    while (path.length > 0) {
+	let argument = path.pop();
+	let operator = path.pop();
+	operator.finishReversal(argument);
+    }
 }
