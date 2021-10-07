@@ -42,7 +42,7 @@ function mergeNodes(idx1, idx2) {
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
     
-    if (node1.free || node2.free) {
+    if (node1.free && node2.free) {
 	// dependency
 	if (!node2.free) {
 	    // node1 is free but node2 is bound
