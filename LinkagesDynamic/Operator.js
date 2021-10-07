@@ -8,6 +8,8 @@ const REVERSE1 = 1;
 const REVERSE2 = 2;
 const COLLAPSED = 3;
 const REVCOLLAPSED = 4;
+const IDENTITY1 = 5;
+const IDENTITY2 = 6;
 
 // path labels
 const OUTPUT = 0;
@@ -68,6 +70,8 @@ class Operator {
 	    this.dragging = this.myInput1.notifyClick();
 	    return this.dragging;
 	case REVCOLLAPSED:
+	case IDENTITY1:
+	case IDENTITY2:
 	    this.dragging = this.myOutput.notifyClick();
 	    return this.dragging;
 	default:
@@ -123,7 +127,8 @@ class Operator {
 	}
 
 	// modes where myOutput is free w.r.t. this operator
-	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.mode==REVCOLLAPSED) {
+	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.mode==REVCOLLAPSED
+	    || this.mode==IDENTITY1 || this.mode==IDENTITY2) {
 	    let newpath = path.slice();
 	    newpath.push(this);
 	    if (this.myOutput.free) {
@@ -148,6 +153,7 @@ class Operator {
 	}
 
 	// reverse only if user is clicking on the dependent node
+	// (dependent node in IDENTITY modes cannot be reversed)
 	if ((this.mode == DEFAULT && this.myOutput.mouseover) ||
 	    (this.mode == REVERSE1 && this.myInput1.mouseover) ||
 	    (this.mode == REVERSE2 && this.myInput2.mouseover) ||
@@ -268,32 +274,60 @@ class Operator {
     // call only from mergeNodes in structures.js
     collapse(node1, node2) {
 	if (node1===this.myInput1) {
-	    if (node2===this.myInput2) {
+	    if (node2===this.myInput2) { // DEFAULT
 		this.mode = COLLAPSED;
 		this.myInput2 = node1;
 	    }
-	    if (node2===this.myOutput) {
-		// TODO: "identity" mode
+	    if (node2===this.myOutput) { // REVERSE2
+		this._makeDegenerate();
+		this.myOutput = node1;
 	    }
 	} else if (node1===this.myInput2) {
-	    if (node2===this.myInput1) {
+	    if (node2===this.myInput1) { // DEFAULT
 		this.mode = COLLAPSED;
 		this.myInput1 = node1;
 	    }
-	    if (node2===this.myOutput) {
-		// TODO: "identity" mode
+	    if (node2===this.myOutput) { // REVERSE1
+		this._makeDegenerate();
+		this.myOutput = node1;
 	    }
 	} else if (node1===this.myOutput) {
-	    if (node2===this.myInput1 || node2===this.myInput2) {
-		// TODO: "identity" mode
+	    if (node2===this.myInput1) { // REVERSE2
+		this._makeDegenerate();
+		this.myInput1 = node1;
+	    }
+	    if (node2===this.myInput2) { // REVERSE1
+		this._makeDegenerate();
+		this.myInput2 = node1();
 	    }
 	}
-	if (this.mode==COLLAPSED) {
+	if (this.mode==COLLAPSED || this.mode==IDENTITY1 || this.mode==IDENTITY2) {
 	    indicatorFlash = true;
-	    // do I need to do anything with free/bound status?
 	}
     }
 
+    // call only from collapse
+    _makeDegenerate() {
+	let idnode;
+	if (this.mode == REVERSE1) {
+	    idnode = this.myInput1;
+	    this.mode = IDENTITY1;
+	} else if (this.mode == REVERSE2) {
+	    idnode = this.myInput2;
+	    this.mode = IDENTITY2;
+	} else {
+	    // should not be able to get here from other modes
+	    return;
+	}
+	if (this.type == ADDER) {
+	    idnode.setReal(0);
+	    idnode.setImaginary(0);
+	} else if (this.type == MULTIPLIER) {
+	    idnode.setReal(1);
+	    idnode.setImaginary(0);
+	}
+    }
+    
     // for any arguments where node2 appears, replace with node2
     // call only from mergeNodes in structures.js
     replace(node1, node2) {
@@ -359,7 +393,11 @@ class Operator {
 	    lowerY = (i1 - searchSize) - (iout / 2);
 	    movingNode = this.myInput1;
 	    break;
-
+	    
+	case IDENTITY1:
+	case IDENTITY2:
+	    return;
+	    
 	default:
 	    // should not get here
 	}
@@ -433,6 +471,10 @@ class Operator {
 	    lowerY = (i1 - searchSize) - iquot;
 	    movingNode = this.myInput1;
 	 break;
+
+	case IDENTITY1:
+	case IDENTITY2:
+	    return;
 	    
 	default:
 	    // should not get here
@@ -497,7 +539,11 @@ class Operator {
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		//nodes
 		fill(200,255,200);
-		this.myInput1.display();
+		if (this.mode == IDENTITY2) {
+		    this.myInput2.display();
+		}else{
+		    this.myInput1.display();
+		}
 		fill(30,200,255);
 		this.myOutput.display();
 		
@@ -509,12 +555,18 @@ class Operator {
 		line(width/2, height/2,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		stroke(255,100,0);
-		line(width/2, height/2,
-		     this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
+		if (this.mode==COLLAPSED || this.mode==REVCOLLAPSED) {
+		    line(width/2, height/2,
+			 this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
+		}
 		//nodes
 		noStroke();
 		fill(255,200,0);
-		this.myInput1.display();
+		if (this.mode == IDENTITY2) {
+		    this.myInput2.display();
+		}else{
+		    this.myInput1.display();
+		}
 		fill(255,0,0);
 		this.myOutput.display();
 	    }

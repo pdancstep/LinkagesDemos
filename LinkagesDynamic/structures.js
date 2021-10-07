@@ -43,17 +43,6 @@ function mergeNodes(idx1, idx2) {
     let node2 = myNumbers[idx2];
     
     if (node1.free && node2.free) {
-	// dependency
-	if (!node2.free) {
-	    // node1 is free but node2 is bound
-	    // replace node1's dependency info with node 2's
-	    node1.free = false;
-	    node1.controller = node2.controller;
-	}else{
-	    // either both are free or node1 is bound and node2 is free
-	    // we keep node1's dependency info, so there's nothing to do here
-	}
-	
 	// replace node2 with node1 in all of node2's operators
 	for (oper of node2.operators) {
 	    if (node1.operators.includes(oper)) {
@@ -70,7 +59,7 @@ function mergeNodes(idx1, idx2) {
 	myNumbers.splice(idx2, 1);
 	return true;
     } else {
-	// cannot merge: both nodes already dependent
+	// cannot merge: at least one node is dependent
 	return false;
     }
 }
