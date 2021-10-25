@@ -494,7 +494,7 @@ class Operator {
 		stroke(30,200,225);
 		strokeWeight(1);
 		beginShape();
-		vertex(width/2,height/2);
+		vertex(centerX,centerY);
 		vertex(this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
 		vertex(this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		vertex(this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
@@ -512,12 +512,12 @@ class Operator {
 		noFill();
 		strokeWeight(1);
 		stroke(255,0,0);
-		line(width/2, height/2,
+		line(centerX, centerY,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		stroke(255,100,0);
-		line(width/2, height/2,
+		line(centerX, centerY,
 		     this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
-		line(width/2, height/2,
+		line(centerX, centerY,
 		     this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
 		//nodes
 		noStroke();     
@@ -535,7 +535,7 @@ class Operator {
 		stroke(30,200,225);
 		strokeWeight(1);
 		// only one line in a doubler/halver
-		line(width/2, height/2,
+		line(centerX, centerY,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		//nodes
 		fill(200,255,200);
@@ -552,11 +552,11 @@ class Operator {
 		noFill();
 		stroke(255,0,0);
 		strokeWeight(1);
-		line(width/2, height/2,
+		line(centerX, centerY,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
 		stroke(255,100,0);
 		if (this.mode==COLLAPSED || this.mode==REVCOLLAPSED) {
-		    line(width/2, height/2,
+		    line(centerX, centerY,
 			 this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
 		}
 		//nodes

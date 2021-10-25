@@ -17,6 +17,14 @@ const iterations = 100;
 const updateCycles = 3;
 
 
+//center coords.
+const centerX = 700
+const centerY = 400
+//global scale (standard, 50px = 1 unit)
+const globalScale = 50
+
+
+
 //double tap reference (sketch level)
 var tappedOnce = false;
 var currentTime;
@@ -31,6 +39,7 @@ var holdLength = 700;
 var reversingOperator = false;
 
 var indicatorFlash = false;
+
 
 function draw() {
     //manage double tap
@@ -63,9 +72,9 @@ function draw() {
     noFill();
     stroke(200);
     strokeWeight(1);
-    line(0,height/2,width,height/2);
-    line(width/2,0,width/2,height);
-    ellipse(width/2,height/2,100,100); // unit circle
+    line(0,centerY,width,centerY);
+    line(centerX,0,centerX,height);
+    ellipse(centerX,centerY,100,100); // unit circle
     
     //buttons
     noStroke();
@@ -82,11 +91,11 @@ function draw() {
     //coordinate data
     fill(150);
     noStroke();
-    for (i=-15; i<16; i++){
-	text(i, width/2+i*50, height/2-16);
-	text(-i+"i", width/2-20, height/2+i*50);
-	ellipse(width/2+i*50, height/2, 5, 5);
-	ellipse(width/2, height/2+i*50, 5, 5);
+    for (i=-20; i<20; i++){
+	text(i, centerX+i*globalScale, centerY-16);
+	text(-i+"i", centerX-20, centerY+i*globalScale);
+	ellipse(centerX+i*globalScale, centerY, 5, 5);
+	ellipse(centerX, centerY+i*globalScale, 5, 5);
     }
     
     if(indicatorFlash){
@@ -104,19 +113,19 @@ function draw() {
 }
 
 function pixelToAxisX(coord) {
-    return (coord - (width/2)) / 50;
+    return (coord - centerX) / globalScale;
 }
 
 function pixelToAxisY(coord) {
-    return ((height/2) - coord) / 50;
+    return (centerY - coord) / globalScale;
 }
 
 function axisToPixelX(coord) {
-    return (coord * 50) + (width/2);
+    return (coord * globalScale) + centerX;
 }
 
 function axisToPixelY(coord) {
-    return (height/2) - (coord * 50);
+    return centerY - (coord * globalScale);
 }
 
 function touchStarted() {
