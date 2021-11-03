@@ -58,11 +58,9 @@ function mergeNodes(idx1, idx2) {
 		oper.collapse(node1, node2);
 	    }else{
 		oper.replace(node1, node2);
+		node1.operators.push(oper);
 	    }
 	}
-	
-	// add node2's former operators to node1's operators
-	node1.operators = node1.operators.concat(node2.operators);
 	
 	// remove node2 from the graph
 	myNumbers.splice(idx2, 1);
@@ -111,8 +109,11 @@ function _reverseAndMerge(idx_torev, idx_other) {
     }
     
     // we accomplished the merge, now regain control of the node we gave up
+    // NOTE don't use indices into myNumbers after this point,
+    // and remember that one of the two nodes is now garbage
     giveupnode.mouseover = true;
     node_bound.mouseover = false;
+    node_free.mouseover = false;
     let rev2done = giveupnode.controller.reverseOperator();
     if (rev2done) {
 	if (reversingOperator) { // more than one possible reversal
@@ -120,7 +121,7 @@ function _reverseAndMerge(idx_torev, idx_other) {
 	    let found = false;
 	    for (let i = 0; i < freeNodes.length; i++)
 	    {
-		if (freeNodes[i] === node_bound) {
+		if (freeNodes[i] === node_bound || freeNodes[i] === node_free) {
 		    found = true;
 		    reverseByPath(freeNodePaths[i]);
 		    break;
@@ -170,7 +171,7 @@ function closeReversal() {
 
 // instruct each operator along the designated freeNodePath to reverse
 function reverseByPath(path) {
-    while (path.length > 0) {
+    while (path.length > 1) {
 	let argument = path.pop();
 	let operator = path.pop();
 	operator.finishReversal(argument);

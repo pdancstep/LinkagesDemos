@@ -116,9 +116,8 @@ class Operator {
 	// modes where myInput2 is free w.r.t this operator
 	if (this.mode==DEFAULT || this.mode==REVERSE1) {
 	    let newpath = path.slice();
-	    newpath.push(this);
+	    newpath.push(this, INPUT2);
 	    if (this.myInput2.free) {
-		newpath.push(INPUT2);
 		freeNodes.push(this.myInput2);
 		freeNodePaths.push(newpath);
 	    }else{
@@ -130,9 +129,8 @@ class Operator {
 	if (this.mode==REVERSE1 || this.mode==REVERSE2 || this.mode==REVCOLLAPSED
 	    || this.mode==IDENTITY1 || this.mode==IDENTITY2) {
 	    let newpath = path.slice();
-	    newpath.push(this);
+	    newpath.push(this, OUTPUT);
 	    if (this.myOutput.free) {
-		newpath.push(OUTPUT);
 		freeNodes.push(this.myOutput);
 		freeNodePaths.push(newpath);
 	    }else{
