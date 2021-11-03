@@ -40,9 +40,18 @@ function findMerge() {
     }
 }
 
+var _attempts = 0;
+
 // combine two nodes (essentially, add the second node's properties to the first)
 // returns true if a merge was successfully performed
 function mergeNodes(idx1, idx2) {
+    // don't keep trying if we've already made 2 recursive calls
+    if (_attempts >= 2) {
+	_attempts = 0;
+	return false;
+    }
+
+    // get the nodes to be merged
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
     
@@ -62,8 +71,46 @@ function mergeNodes(idx1, idx2) {
 	// remove node2 from the graph
 	myNumbers.splice(idx2, 1);
 	return true;
+    } else if (node1.free) {
+	// node2 is bound and should be reversed before merge
+	let revstatus = node2.controller.reverseOperator();
+	if (revstatus) {
+	    if (reversingOperator) { // more than one possible reversal
+		// complete the reversal
+		let giveupnode = 0; // TODO try more than one possibility
+		reverseByPath(freeNodePaths[giveupnode]);
+		reversingOperator = false;
+		freeNodes = [];
+		freeNodePaths = [];
+	    }
+	    // reversal complete; try merge again
+	    _attempts++;
+	    return mergeNodes(idx1, idx2);
+	}
+	else { // could not reverse
+	    return false;
+	}
+    } else if (node2.free) {
+	// node1 is bound and should be reversed before merge
+	let revstatus = node1.controller.reverseOperator();
+	if (revstatus) {
+	    if (reversingOperator) { // more than one possible reversal
+		// complete the reversal
+		let giveupnode = 0; // TODO try more than one possibility
+		reverseByPath(freeNodePaths[giveupnode]);
+		reversingOperator = false;
+		freeNodes = [];
+		freeNodePaths = [];
+	    }
+	    // reversal complete; try merge again
+	    _attempts++;
+	    return mergeNodes(idx1, idx2);
+	}
+	else { // could not reverse
+	    return false;
+	}
     } else {
-	// cannot merge: at least one node is dependent
+	// cannot merge: both nodes are dependent
 	return false;
     }
 }
