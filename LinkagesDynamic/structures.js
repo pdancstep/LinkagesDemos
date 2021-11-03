@@ -55,7 +55,7 @@ function mergeNodes(idx1, idx2) {
     let node1 = myNumbers[idx1];
     let node2 = myNumbers[idx2];
     
-    if (node1.free || node2.free) {
+    if (node1.free && node2.free) {
 	// replace node2 with node1 in all of node2's operators
 	for (oper of node2.operators) {
 	    if (node1.operators.includes(oper)) {
