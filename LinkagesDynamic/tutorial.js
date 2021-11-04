@@ -1,3 +1,25 @@
+
+// array holding sequential level specifications
+var myLevels = [];
+
+//counter for incrementing through the tutorials...
+var level = 0;
+
+//variables for transformation overlays...
+//Anchor is where the mouse sets down
+var anchorX;
+var anchorY;
+
+var anchorRadius;
+var anchorTheta;
+var scaleFactor;
+var offsetTheta;
+
+var cartesianDemo = false;
+var polarDemo = false;
+
+
+
 //Functions for running tutorial levels...
 
 function runTutorial(){

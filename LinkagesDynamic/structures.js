@@ -3,9 +3,6 @@
 var myNumbers = [];
 var myOperators = [];
 
-// array holding sequential level specifications
-
-var myLevels = [];
 
 // nodes to potentially give up control of when in reversal mode
 var freeNodes = [];

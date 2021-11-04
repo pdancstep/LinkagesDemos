@@ -39,20 +39,6 @@ var reversingOperator = false;
 
 var indicatorFlash = false;
 
-//counter for incrementing through the tutorials...
-var level = 0;
-
-
-//variables for transformation overlays...
-//Anchor is where the mouse sets down
-var anchorX;
-var anchorY;
-
-var anchorRadius
-var anchorTheta
-var scaleFactor
-var offsetTheta
-
 
 
 
@@ -98,7 +84,7 @@ function draw() {
     strokeWeight(1);
     line(0,centerY,width,centerY);
     line(centerX,0,centerX,height);
-    ellipse(centerX,centerY,100,100); // unit circle
+    ellipse(centerX,centerY,2*globalScale,2*globalScale); // unit circle
     
 
 

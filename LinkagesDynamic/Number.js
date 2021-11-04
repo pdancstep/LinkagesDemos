@@ -48,6 +48,35 @@ class Number {
 	}	
     }
 
+    //updates for operator with inputs locked on x,y axes, for cartesian coordinates.
+    xAxisUpdate() {
+    	if (this.dragging){
+	    	this.real = pixelToAxisX(mouseX);
+	}	
+    }
+    
+    yAxisUpdate() {
+    	if (this.dragging){
+	    	this.imaginary = pixelToAxisY(mouseY);
+	}	
+    }
+
+    //updates for oeprator with inputs on positive reals, unit circle, for polar coordinates
+    magUpdate(){
+    	if (this.dragging){
+    		this.real = sqrt((dist(mouseX,mouseY,centerX,centerY)/globalScale)*(dist(mouseX,mouseY,centerX,centerY)/globalScale));
+    	}
+    }
+
+    argUpdate(){
+    	if (this.dragging){
+    		this.real = cos(atan2(mouseY-centerY,mouseX-centerX));
+    		this.imaginary = -sin(atan2(mouseY-centerY,mouseX-centerX));
+    	}
+    }
+
+
+
     // draw the circle for this Number's coordinates
     drawNode() {
 	noStroke();

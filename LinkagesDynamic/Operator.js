@@ -255,10 +255,19 @@ class Operator {
     
     update() {
 	// update possibly dragging numbers
-	this.myInput1.update();
-	this.myInput2.update();
-	this.myOutput.update();
-	
+
+	if(cartesianDemo){
+		this.myInput1.xAxisUpdate();
+		this.myInput2.yAxisUpdate();
+	}else if(polarDemo){
+		this.myInput1.magUpdate();
+		this.myInput2.argUpdate();
+	}else{
+		this.myInput1.update();
+		this.myInput2.update();
+		this.myOutput.update();
+	}
+		
 	for (i=0; i<iterations; i++){
 	    if (this.type==ADDER){
 		this.propagateOutputSum();
