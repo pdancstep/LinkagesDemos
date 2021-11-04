@@ -234,8 +234,7 @@ function touchStarted() {
 	new Operator(MULTIPLIER);
     }
 
-    //update tutorial...
-    tutorialClick()
+
 
     
     pressAndHold = true;
@@ -253,7 +252,8 @@ function touchStarted() {
 	oper.notifyClick();
     }
 
-
+    //update tutorial...
+    tutorialClick()
 
 }
 

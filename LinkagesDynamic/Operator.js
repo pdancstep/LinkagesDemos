@@ -256,10 +256,10 @@ class Operator {
     update() {
 	// update possibly dragging numbers
 
-	if(cartesianDemo){
+	if(myLevels[level].cartesian){
 		this.myInput1.xAxisUpdate();
 		this.myInput2.yAxisUpdate();
-	}else if(polarDemo){
+	}else if(myLevels[level].polar){
 		this.myInput1.magUpdate();
 		this.myInput2.argUpdate();
 	}else{

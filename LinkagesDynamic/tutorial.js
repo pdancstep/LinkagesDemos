@@ -36,6 +36,7 @@ var trailLimit = 100
 
 function runTutorial(){
 
+
 	//side panel for lessons
     fill(35);
     rect(1300,0,300,height);
@@ -48,6 +49,11 @@ function runTutorial(){
     //drawing trails...
     if(myOperators.length==1&&trails){
         makeTrails();
+    }
+
+    if(myLevels[level].targetDot){
+        fill(0,255,0,100);
+        ellipse(axisToPixelX(myLevels[level].outputTargetX),axisToPixelY(myLevels[level].outputTargetY),25,25)
     }
 
 
