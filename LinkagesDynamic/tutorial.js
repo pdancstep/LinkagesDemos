@@ -1,4 +1,4 @@
-//Functions for running tutorial levels/problems...
+//Functions for running tutorial levels...
 
 function runTutorial(){
 
@@ -113,9 +113,9 @@ function runTutorial(){
             textSize(15);
             text(myLevels[level].explanation, 1325, 475, 250, 300);
             
-            fill(150)
+            fill(150);
             rect(1400,800,100,50,5)
-            fill(50)
+            fill(50);
             textSize(15);
             text("Next",1450,825)
         }else{
@@ -127,7 +127,90 @@ function runTutorial(){
         }
     }
 
+}
 
+function transformOverlay(){
+
+    //creates animated guides which show the geometry of operator movement...
+
+    if(myOperators.length==1&&myOperators[0].dragging){
+       
+        //if operator is an adder
+        if(myOperators[0].type==ADDER){
+
+            push();
+
+                fill(0,0,255,10);
+                noStroke();
+                rect(0,0,width,height);
+
+                translate(mouseX-anchorX,mouseY-anchorY);
+
+                noFill();
+                stroke(100,200,255,75);
+                strokeWeight(1);
+                for(i=-20;i<20;i++){
+                    line(-width,75*i,width*2,75*i);
+                    line(75*i,-height,75*i,height*2);
+                }       
+
+            pop();
+
+        //if it's a multiplier
+        }else{
+
+            scaleFactor = sqrt((dist(mouseX,mouseY,centerX,centerY)/globalScale)*(dist(mouseX,mouseY,centerX,centerY)/globalScale))/anchorRadius;
+            offsetTheta = atan2(mouseY-centerY,mouseX-centerX)-anchorTheta;
+
+            push();
+
+                fill(255,0,0,10);
+                rect(0,0,width,height);
+
+                translate(centerX,centerY);
+                rotate(offsetTheta);
+                scale(scaleFactor);
+
+                noFill();
+                stroke(255,100,0,75);
+                strokeWeight(1/scaleFactor);
+
+                for(i=0;i<8;i++){
+                    line(0,0,1000*cos(i*TWO_PI/8),1000*sin(i*TWO_PI/8));
+                }
+                for(i=0;i<16;i++){
+                    ellipse(0,0,100*i,100*i);
+                }
+
+            pop();
+        }
+    }
+}
+
+//respond to click events...
+function tutorialClick(){
+
+
+	if(myLevels[level].testComplete()&&(level!=(myLevels.length-1))){
+        if(mouseX>1300){
+            level++;
+        }
+    }
+
+
+	//reference variables for transform overlay 
+    //FIX: Make this conditional depending on level detials?
+    if(myOperators.length==1&&myOperators[0].dragging){
+        
+        if(myOperators[0].type==ADDER){
+            anchorX = mouseX;
+            anchorY = mouseY;
+        //if operator is a multiplier
+        }else{
+            anchorRadius = sqrt((dist(mouseX,mouseY,centerX,centerY)/globalScale)*(dist(mouseX,mouseY,centerX,centerY)/globalScale));
+            anchorTheta = atan2(mouseY-centerY,mouseX-centerX);
+        }
+    }
 
 
 }
