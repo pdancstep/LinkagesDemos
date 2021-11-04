@@ -15,8 +15,20 @@ var anchorTheta;
 var scaleFactor;
 var offsetTheta;
 
+//special modes - FIX: move these into level javascript objects?
+
+var overlay = false;
+
+
 var cartesianDemo = false;
 var polarDemo = false;
+
+var trails = false;
+
+var trail1 = []
+var trail2 = []
+
+var trailLimit = 100
 
 
 
@@ -32,6 +44,12 @@ function runTutorial(){
     textAlign(CENTER,CENTER);
     fill(200);
     text(myLevels[level].instructions, 1325, 25, 250, 300);
+
+    //drawing trails...
+    if(myOperators.length==1&&trails){
+        makeTrails();
+    }
+
 
 
     //DRO for output
@@ -132,6 +150,7 @@ function runTutorial(){
     if(myLevels[level].testComplete()){
         if(myLevels[level].explanation){
             fill(200);
+            noStroke();
             textSize(15);
             text(myLevels[level].explanation, 1325, 475, 250, 300);
             
@@ -142,6 +161,7 @@ function runTutorial(){
             text("Next",1450,825)
         }else{
             fill(150);
+            noStroke();
             rect(1400,475,100,50,5);
             fill(50);
             textSize(15);
@@ -208,6 +228,37 @@ function transformOverlay(){
         }
     }
 }
+
+
+function makeTrails(){
+
+    trail1.push([axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary)]);
+    if(trail1.length>trailLimit){
+        trail1.splice(0,1);
+    }
+    trail2.push([axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary)]);
+    if(trail2.length>trailLimit){
+        trail2.splice(0,1);
+    }
+
+    strokeWeight(3);
+
+    stroke(255);
+    for(i=0;i<trail1.length-1;i++){
+        line(trail1[i][0],trail1[i][1],trail1[i+1][0],trail1[i+1][1]);
+    }
+    if(myOperators[0].type==ADDER){
+        stroke(30,200,225);
+    }else{
+        stroke(255,0,0)
+    }
+    for(i=0;i<trail2.length-1;i++){
+        line(trail2[i][0],trail2[i][1],trail2[i+1][0],trail2[i+1][1]);
+    }
+
+}
+
+
 
 //respond to click events...
 function tutorialClick(){

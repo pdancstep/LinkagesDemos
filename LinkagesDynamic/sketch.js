@@ -2,7 +2,7 @@ function setup() {
     createCanvas(1600,900);
 }
 
-// ???
+//background color and debug variable...
 const indicator = 50;
 
 
@@ -157,8 +157,6 @@ function draw() {
 
     //make tutorials run on top of this interactive canvas...
     runTutorial();
-
-
 
 
 
