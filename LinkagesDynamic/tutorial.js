@@ -47,7 +47,7 @@ function runTutorial(){
     text(myLevels[level].instructions, 1325, 25, 250, 300);
 
     //drawing trails...
-    if(myOperators.length==1&&trails){
+    if(myOperators.length==1&&myLevels[level].tracers){
         makeTrails();
     }
 
