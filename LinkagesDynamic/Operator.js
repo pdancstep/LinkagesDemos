@@ -41,6 +41,25 @@ class Operator {
 	this.myindex = registerOperator(this);
     }
 
+    // returns the dependent node based on this operator's current mode
+    dependentNode() {
+	switch (this.mode) {
+	case DEFAULT:
+	case COLLAPSED:
+	    return this.myOutput;
+	case REVERSE1:
+	case IDENTITY1:
+	case REVCOLLAPSED:
+	    return this.myInput1;
+	case REVERSE2:
+	case IDENTITY2:
+	    return this.myInput2;
+	default:
+	    // should not get here
+	    return void;
+	}
+    }
+
     //checks each of its inputs to see if the mouse is currently hovering over
     checkMouseover() {
 	return (this.myInput1.checkMouseover() ||
