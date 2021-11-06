@@ -26,6 +26,12 @@ class Number {
 	return this.mouseover;
     }
 
+    // check if this node is within tolerancePx pixels of the given point
+    isWithinPx(targetX, targetY, tolerancePx) {
+	return (dist(this.getRealPx(), this.getImaginaryPx(),
+		     axisToPixelX(targetX), axisToPixelY(targetY)) < tolerancePx);
+    }
+
     // tell the number that it has been clicked on.
     // returns the current dragging state
     notifyClick() {
