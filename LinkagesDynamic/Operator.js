@@ -56,7 +56,7 @@ class Operator {
 	    return this.myInput2;
 	default:
 	    // should not get here
-	    return void;
+	    return undefined;
 	}
     }
 
