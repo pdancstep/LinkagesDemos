@@ -19,7 +19,6 @@ var offsetTheta;
 
 var overlay = false;
 
-
 var cartesianDemo = false;
 var polarDemo = false;
 
@@ -30,14 +29,10 @@ var trail2 = []
 
 var trailLimit = 100
 
-
-
 //Functions for running tutorial levels...
 
-function runTutorial(){
-
-
-	//side panel for lessons
+function runTutorial() {
+    //side panel for lessons
     fill(35);
     rect(1300,0,300,height);
 
@@ -53,14 +48,15 @@ function runTutorial(){
 
     if(myLevels[level].targetDot){
         fill(0,255,0,100);
-        ellipse(axisToPixelX(myLevels[level].outputTargetX),axisToPixelY(myLevels[level].outputTargetY),25,25)
+        ellipse(axisToPixelX(myLevels[level].outputTargetX),
+		axisToPixelY(myLevels[level].outputTargetY),
+		25,
+		25);
     }
-
-
 
     //DRO for output
     if(myLevels[level].DRO){
-        if(myLevels[level].testComplete()){
+        if(myLevels[level].testComplete()) {
             fill(100);
             stroke(0,255,0);
             rect(1360,360,170,80);
@@ -79,41 +75,42 @@ function runTutorial(){
             textSize(12);
             text("Current output", 1360, 360);
         }
-    
 
         //readout of dependent variable
         textSize(50)
-        textAlign(CENTER,CENTER);
-        if(myOperators.length==1){
-
+        textAlign(CENTER, CENTER);
+        if(myOperators.length==1) {
             noStroke();
 
-            if(myOperators[0].type==ADDER){
-                if(myOperators[0].mode==DEFAULT||myOperators[0].mode==COLLAPSED){
+            if(myOperators[0].type==ADDER) {
+                if(myOperators[0].mode==DEFAULT || myOperators[0].mode==COLLAPSED) {
                     
                     fill(30,200,255);
-
-                    if(round(myOperators[0].myOutput.imaginary)==0){
-                        text(round(myOperators[0].myOutput.real),1325, 350, 250, 100);
-                    }else if(round(myOperators[0].myOutput.real)==0){
-                        text(round(myOperators[0].myOutput.imaginary)+"i", 1325, 350, 250, 100);
+                    if (round(myOperators[0].myOutput.imaginary)==0) {
+                        text(round(myOperators[0].myOutput.real),
+			     1325, 350, 250, 100);
+                    } else if (round(myOperators[0].myOutput.real)==0) {
+                        text(round(myOperators[0].myOutput.imaginary) + "i",
+			     1325, 350, 250, 100);
                     }else{
-                        text("("+round(myOperators[0].myOutput.real)+","+round(myOperators[0].myOutput.imaginary)+"i)",1325, 350, 250, 100);
+                        text("(" + round(myOperators[0].myOutput.real)
+			     + "," + round(myOperators[0].myOutput.imaginary) + "i)",
+			     1325, 350, 250, 100);
                     }
-
-                }else if(myOperators[0].mode==REVCOLLAPSED){
+                } else if (myOperators[0].mode==REVCOLLAPSED){
                     fill(200,255,200);
 
-                    if(round(myOperators[0].myInput1.imaginary)==0){
-                        text(round(myOperators[0].myInput1.real),1325, 350, 250, 100);
-                    }else if(round(myOperators[0].myInput1.real)==0){
-                        text(round(myOperators[0].myInput1.imaginary)+"i", 1325, 350, 250, 100);
+                    if (round(myOperators[0].myInput1.imaginary)==0) {
+                        text(round(myOperators[0].myInput1.real),
+			     1325, 350, 250, 100);
+                    } else if (round(myOperators[0].myInput1.real)==0) {
+                        text(round(myOperators[0].myInput1.imaginary) + "i",
+			     1325, 350, 250, 100);
                     }else{
-                        text("("+round(myOperators[0].myInput1.real)+","+round(myOperators[0].myInput1.imaginary)+"i)",1325, 350, 250, 100);
+                        text("(" + round(myOperators[0].myInput1.real)
+			     + "," + round(myOperators[0].myInput1.imaginary) + "i)",
+			     1325, 350, 250, 100);
                     }
-
-
-
                 }
             //If output is from multiplier...
             }else {

@@ -5,7 +5,6 @@ function setup() {
 //background color and debug variable...
 const indicator = 50;
 
-
 //how far to look in each direction
 const searchSize = .1;
 
@@ -15,14 +14,11 @@ const iterations = 100;
 //extra number of loops for updating positions, helps with rigidity...
 const updateCycles = 3;
 
-
 //center coords.
 const centerX = 650
 const centerY = 450
 //global scale (standard, 50px = 1 unit)
 const globalScale = 50
-
-
 
 //double tap reference (sketch level)
 var tappedOnce = false;
@@ -38,10 +34,6 @@ var holdLength = 700;
 var reversingOperator = false;
 
 var indicatorFlash = false;
-
-
-
-
 
 function draw() {
     //manage double tap
@@ -86,23 +78,12 @@ function draw() {
     line(centerX,0,centerX,height);
     ellipse(centerX,centerY,2*globalScale,2*globalScale); // unit circle
     
-
-
-
-
-
-
-
-
     //draw operators
     for (const oper of myOperators) {
-    oper.display();
+	oper.display();
     }
-
-
     
     //coordinate data
-
     textSize(15);
     textAlign(CENTER,CENTER);
     for (i=-20; i<20; i++){
@@ -113,8 +94,6 @@ function draw() {
     	ellipse(centerX+i*globalScale, centerY, 5, 5);
     	ellipse(centerX, centerY+i*globalScale, 5, 5);
     }
-
-
 
     //buttons
     textSize(15);
@@ -134,12 +113,8 @@ function draw() {
     ellipse(30,90,20,20);
     text("multiplier",45,90);
 
-
     //digital readout for existing operators
     printToPlot();
-
-
-
     
     if(indicatorFlash){
 	background(0);
@@ -154,31 +129,22 @@ function draw() {
 	}
     }
 
-
     //make tutorials run on top of this interactive canvas...
     runTutorial();
-
-
-
-
-
-
-
-
 }
-
-
 
 function printToPlot(){
     //On-canvas DRO for operators...
-
     textAlign(CENTER,CENTER);
     textSize(30);
     for(i=0;i<myOperators.length;i++){
 
         fill(150)
         
-        text("("+round(myOperators[i].myInput1.real)+","+round(myOperators[i].myInput1.imaginary)+"i)",50,height-40*(i+1));
+        text("(" + round(myOperators[i].myInput1.real)
+	     + "," + round(myOperators[i].myInput1.imaginary) + "i)",
+	     50,
+	     height - 40*(i+1));
 
         if(myOperators[i].type==ADDER){
             text("+",115,height-40*(i+1));
@@ -186,7 +152,10 @@ function printToPlot(){
             text("x",115,height-40*(i+1));
         }
 
-        text("("+round(myOperators[i].myInput2.real)+","+round(myOperators[i].myInput2.imaginary)+"i)",175,height-40*(i+1));
+        text("(" + round(myOperators[i].myInput2.real)
+	     + "," + round(myOperators[i].myInput2.imaginary) + "i)",
+	     175,
+	     height - 40*(i+1));
 
         text("=",230,height-40*(i+1));
         
@@ -195,12 +164,12 @@ function printToPlot(){
         }else{
             fill(255,0,0);
         }
-        text("("+round(myOperators[i].myOutput.real)+","+round(myOperators[i].myOutput.imaginary)+"i)",285,height-40*(i+1));
-
+        text("(" + round(myOperators[i].myOutput.real)
+	     + "," + round(myOperators[i].myOutput.imaginary) + "i)",
+	     285,
+	     height - 40*(i+1));
     }
 }
-
-
 
 function pixelToAxisX(coord) {
     return (coord - centerX) / globalScale;
@@ -224,23 +193,20 @@ function touchStarted() {
 	closeReversal();
     }
     
-    if (dist(mouseX,mouseY,30,30)<10){
-    myOperators = [];
+    if (dist(mouseX,mouseY,30,30) < 10) {
+	myOperators = [];
     }
-    if (dist(mouseX,mouseY,30,60)<10){
+    if (dist(mouseX,mouseY,30,60) < 10) {
 	new Operator(ADDER);
     }
-    if (dist(mouseX,mouseY,30,90)<10){
+    if (dist(mouseX,mouseY,30,90) < 10) {
 	new Operator(MULTIPLIER);
     }
 
-
-
-    
     pressAndHold = true;
     timerStart = millis();
     
-    if(!tappedOnce){
+    if(!tappedOnce) {
 	tappedOnce = true;
 	currentTime = millis();
     }else{
@@ -248,13 +214,12 @@ function touchStarted() {
 	tappedOnce = false;
     }
 
-    for (const oper of myOperators){
+    for (const oper of myOperators) {
 	oper.notifyClick();
     }
 
     //update tutorial...
-    tutorialClick()
-
+    tutorialClick();
 }
 
 function touchMoved() {
