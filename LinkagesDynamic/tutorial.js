@@ -24,10 +24,10 @@ var polarDemo = false;
 
 var trails = false;
 
-var trail1 = []
-var trail2 = []
+var trail1 = [];
+var trail2 = [];
 
-var trailLimit = 100
+var trailLimit = 100;
 
 //Functions for running tutorial levels...
 
@@ -82,76 +82,43 @@ function runTutorial() {
         if(myOperators.length==1) {
             noStroke();
 
-            if(myOperators[0].type==ADDER) {
-                if(myOperators[0].mode==DEFAULT || myOperators[0].mode==COLLAPSED) {
-                    
-                    fill(30,200,255);
-                    if (round(myOperators[0].myOutput.imaginary)==0) {
-                        text(round(myOperators[0].myOutput.real),
-			     1325, 350, 250, 100);
-                    } else if (round(myOperators[0].myOutput.real)==0) {
-                        text(round(myOperators[0].myOutput.imaginary) + "i",
-			     1325, 350, 250, 100);
-                    }else{
-                        text("(" + round(myOperators[0].myOutput.real)
-			     + "," + round(myOperators[0].myOutput.imaginary) + "i)",
-			     1325, 350, 250, 100);
-                    }
-                } else if (myOperators[0].mode==REVCOLLAPSED){
-                    fill(200,255,200);
+	    // set readout fill
+	    switch (myOperators[0].mode) {
+	    case DEFAULT:
+	    case COLLAPSED:
+		if (myOperators[0].type==ADDER) fill(30,200,255);
+		else fill(255,0,0); // MULTIPLIER
+		break;
+	    case REVCOLLAPSED:
+		if (myOperators[0].type==ADDER) fill(200,255,200);
+		else fill(255,200,0); // MULTIPLIER
+		break;
+	    default:
+		// what about other operator modes?
+	    }
 
-                    if (round(myOperators[0].myInput1.imaginary)==0) {
-                        text(round(myOperators[0].myInput1.real),
-			     1325, 350, 250, 100);
-                    } else if (round(myOperators[0].myInput1.real)==0) {
-                        text(round(myOperators[0].myInput1.imaginary) + "i",
-			     1325, 350, 250, 100);
-                    }else{
-                        text("(" + round(myOperators[0].myInput1.real)
-			     + "," + round(myOperators[0].myInput1.imaginary) + "i)",
-			     1325, 350, 250, 100);
-                    }
-                }
-            //If output is from multiplier...
-            }else {
-
-                if(myOperators[0].mode==DEFAULT||myOperators[0].mode==COLLAPSED){
-                    fill(255,0,0);
-
-                    if(round(myOperators[0].myOutput.imaginary)==0){
-                        text(round(myOperators[0].myOutput.real),1325, 350, 250, 100);
-                    }else if(round(myOperators[0].myOutput.real)==0){
-                        text(round(myOperators[0].myOutput.imaginary)+"i", 1325, 350, 250, 100);
-                    }else{
-                        text("("+round(myOperators[0].myOutput.real)+","+round(myOperators[0].myOutput.imaginary)+"i)",1325, 350, 250, 100);
-                    }
-                }else if(myOperators[0].mode==REVCOLLAPSED){
-                    fill(255,200,0);
-
-                    if(round(myOperators[0].myInput1.imaginary)==0){
-                        text(round(myOperators[0].myInput1.real),1325, 350, 250, 100);
-                    }else if(round(myOperators[0].myInput1.real)==0){
-                        text(round(myOperators[0].myInput1.imaginary)+"i", 1325, 350, 250, 100);
-                    }else{
-                        text("("+round(myOperators[0].myInput1.real)+","+round(myOperators[0].myInput1.imaginary)+"i)",1325, 350, 250, 100);
-                    }
-                }
-
+	    // display value
+	    let dep = myOperators[0].dependentNode();
+	    if (round(dep.imaginary)==0) {
+                text(round(dep.real), 1325, 350, 250, 100);
+            } else if (round(dep.real)==0) {
+                text(round(dep.imaginary) + "i", 1325, 350, 250, 100);
+            }else{
+                text("(" + round(dep.real) + "," + round(dep.imaginary) + "i)",
+		     1325, 350, 250, 100);
             }
-
-
-        }else if(myOperators.length>1){
+	    
+        } else if (myOperators.length>1) {
             fill(200);
             textSize(30);
-            text("Too many operators on the board.\n Clear, and begin again.", 1325, 300, 250, 400);
+            text("Too many operators on the board.\n Clear, and begin again.",
+		 1325, 300, 250, 400);
         }
     }
 
-
-
     //end state for completed level, appearance of "next" button    
-    if(myLevels[level].testComplete()){
-        if(myLevels[level].explanation){
+    if (myLevels[level].testComplete()) {
+        if (myLevels[level].explanation) {
             fill(200);
             noStroke();
             textSize(15);
@@ -171,7 +138,6 @@ function runTutorial() {
             text("Next",1450,500);
         }
     }
-
 }
 
 function transformOverlay(){
