@@ -17,12 +17,6 @@ var offsetTheta;
 
 //special modes - FIX: move these into level javascript objects?
 
-var overlay = false;
-
-var cartesianDemo = false;
-var polarDemo = false;
-
-var trails = false;
 
 var trail1 = [];
 var trail2 = [];
@@ -40,6 +34,12 @@ function runTutorial() {
     textAlign(CENTER,CENTER);
     fill(200);
     text(myLevels[level].instructions, 1325, 25, 250, 300);
+
+    //overlays
+    if(myLevels[level].overlay){
+        transformOverlay();
+    }
+
 
     //drawing trails...
     if(myOperators.length==1&&myLevels[level].tracers){

@@ -15,10 +15,10 @@ const iterations = 100;
 const updateCycles = 3;
 
 //center coords.
-const centerX = 650
-const centerY = 450
+const centerX = 650;
+const centerY = 450;
 //global scale (standard, 50px = 1 unit)
-const globalScale = 50
+const globalScale = 50;
 
 //double tap reference (sketch level)
 var tappedOnce = false;

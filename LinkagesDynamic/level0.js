@@ -40,7 +40,7 @@ myLevels[2] = {
 myLevels[3] = {
     cartesian: true,
     DRO: true,
-    instructions: "Positiong the blue dot on the green dot.",
+    instructions: "Position the blue dot on the green dot.",
     
     targetDot: true,
     
@@ -155,9 +155,23 @@ myLevels[10] = {
 	}
 };
 
+
 myLevels[11] = {
+    overlay: true,
+    instructions: "Place an adder on the board and unpack it",
+    explanation: "The blue overlay graphic shows how the corner and tip of the parallelogram SLIDE together.",
+    testComplete: function(){
+	return (myOperators.length==1
+		&&myOperators[0].type===ADDER
+		&&myOperators[0].myInput1.real!=0
+		&&myOperators[0].myInput2.imaginary!=0);
+    }
+};
+
+myLevels[12] = {
 	DRO: true,
-	instructions: "Place an adder on the board and find\n (1,3i)+(3,2i).",
+	overlay:true,
+	instructions: "Find\n (1,3i)+(3,2i).",
 
 	inputTarget1X: 1,
 	inputTarget1Y: 3,
@@ -179,7 +193,7 @@ myLevels[11] = {
 	}
 };
 
-myLevels[12] = {
+myLevels[13] = {
 	tracers: true,
 	instructions: "Now move the adder around to see tracers...",
 	explanation: "Try making a doubler, and a halver!",
@@ -189,7 +203,7 @@ myLevels[12] = {
 };
 
 
-myLevels[13] = {
+myLevels[14] = {
 	instructions: "Clear the board",
 	testComplete: function(){
 		return (myOperators.length==0);
@@ -197,9 +211,28 @@ myLevels[13] = {
 };
 
 
-myLevels[14] = {
+myLevels[15] = {
+    overlay: true,
+    instructions: "Place a multiplier on the board and unpack it",
+    explanation: "The orange overlay graphic shows how the point of the multiplier SCALE and ROTATE together.",
+    testComplete: function(){
+	return (myOperators.length==1
+		&&myOperators[0].type===MULTIPLIER
+		&&myOperators[0].myInput1.real!=1
+		&&myOperators[0].myInput2.real!=1);
+    }
+};
+
+
+
+
+
+
+
+myLevels[16] = {
+	overlay:true,
 	DRO: true,
-	instructions: "Place a multiplier on the board and find\n 2*(2,2i).",
+	instructions: "Find\n 2*(2,2i).",
 
 	inputTarget1X: 2,
 	inputTarget1Y: 0,
@@ -221,7 +254,7 @@ myLevels[14] = {
 	}
 };
 
-myLevels[15] = {
+myLevels[17] = {
 	tracers: true,
 	instructions: "Now move the adder around to see tracers...",
 	explanation: "Try making a squarer, and a square rooter!",
