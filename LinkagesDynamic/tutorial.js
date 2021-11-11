@@ -46,12 +46,23 @@ function runTutorial() {
         makeTrails();
     }
 
+    //places a dot on the board
     if(myLevels[level].targetDot){
         fill(0,255,0,100);
         ellipse(axisToPixelX(myLevels[level].outputTargetX),
 		axisToPixelY(myLevels[level].outputTargetY),
 		25,
 		25);
+    }
+
+    //message that appears when operator is in the middle of being reversed...
+    if(myLevels[level].reverseMessage){
+        if(reversingOperator){
+            fill(200);
+            noStroke();
+            textSize(15);
+            text(myLevels[level].reverseMessage, 1325, 475, 250, 300);
+        }
     }
 
     //DRO for output

@@ -528,7 +528,7 @@ myLevels[23] = {
 	}
 };
 
-myLevels[25] = {
+myLevels[24] = {
 	DRO: true,
 	instructions: "Find\n (4,i) x (-1,i)",
 
@@ -552,7 +552,7 @@ myLevels[25] = {
 	}
 };
 
-myLevels[26] = {
+myLevels[25] = {
 	DRO: true,
 	instructions: "Find\n (1,-2i) x (1,-4i)",
 	explanation: "End of Section 2.",
