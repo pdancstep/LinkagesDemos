@@ -547,12 +547,12 @@ class Operator {
 		     this.myInput2.getRealPx(), this.myInput2.getImaginaryPx());
 		//nodes
 		noStroke();     
-		fill(255,0,0);
-		this.myOutput.display();
 		fill(255,100,0);
 		this.myInput1.display();
 		fill(255,100,0);
 		this.myInput2.display();
+		fill(255,0,0);
+		this.myOutput.display();
 	    }
 	    
 	}else{ // display for collapsed operator...

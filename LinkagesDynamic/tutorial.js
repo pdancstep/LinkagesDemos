@@ -17,15 +17,26 @@ var offsetTheta;
 
 //special modes - FIX: move these into level javascript objects?
 
-
+//input trails
 var trail1 = [];
 var trail2 = [];
+//output trails
+var trail3 = [];
 
 var trailLimit = 100;
 
 //Functions for running tutorial levels...
 
 function runTutorial() {
+
+
+        //overlays
+    if(myLevels[level].overlay){
+        transformOverlay();
+    }
+
+
+
     //side panel for lessons
     fill(35);
     rect(1300,0,300,height);
@@ -35,10 +46,6 @@ function runTutorial() {
     fill(200);
     text(myLevels[level].instructions, 1325, 25, 250, 300);
 
-    //overlays
-    if(myLevels[level].overlay){
-        transformOverlay();
-    }
 
 
     //drawing trails...
@@ -151,7 +158,24 @@ function runTutorial() {
     }
 }
 
+
+var bgAlpha;
+var hairlineAlpha;
+
+
 function transformOverlay(){
+
+    //optional transparency parameter
+    if(myLevels[level].overlayAlpha){
+        bgAlpha = map(myLevels[level].overlayAlpha,0,100,0,10);
+        hairlineAlpha = map(myLevels[level].overlayAlpha,0,100,0,75);
+    }else{
+        bgAlpha = 10;
+        hairlineAlpha = 75;
+    }
+
+
+
 
     //creates animated guides which show the geometry of operator movement...
 
@@ -162,16 +186,16 @@ function transformOverlay(){
 
             push();
 
-                fill(0,0,255,10);
+                fill(0,0,255,bgAlpha);
                 noStroke();
                 rect(0,0,width,height);
 
                 translate(mouseX-anchorX,mouseY-anchorY);
 
                 noFill();
-                stroke(100,200,255,75);
+                stroke(100,200,255,hairlineAlpha);
                 strokeWeight(1);
-                for(i=-20;i<20;i++){
+                for(i=-20;i<30;i++){
                     line(-width,75*i,width*2,75*i);
                     line(75*i,-height,75*i,height*2);
                 }       
@@ -186,7 +210,7 @@ function transformOverlay(){
 
             push();
 
-                fill(255,0,0,10);
+                fill(255,0,0,bgAlpha);
                 rect(0,0,width,height);
 
                 translate(centerX,centerY);
@@ -194,7 +218,7 @@ function transformOverlay(){
                 scale(scaleFactor);
 
                 noFill();
-                stroke(255,100,0,75);
+                stroke(255,100,0,hairlineAlpha);
                 strokeWeight(1/scaleFactor);
 
                 for(i=0;i<8;i++){
@@ -210,30 +234,44 @@ function transformOverlay(){
 }
 
 
+var trailAlpha
+
 function makeTrails(){
 
     trail1.push([axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary)]);
     if(trail1.length>trailLimit){
         trail1.splice(0,1);
     }
-    trail2.push([axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary)]);
+    trail2.push([axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary)]);
     if(trail2.length>trailLimit){
         trail2.splice(0,1);
     }
 
+    trail3.push([axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary)]);
+    if(trail3.length>trailLimit){
+        trail3.splice(0,1);
+    }
+
     strokeWeight(3);
 
-    stroke(255);
+    strokeCap(SQUARE);
     for(i=0;i<trail1.length-1;i++){
+        trailAlpha = map(i,0,trail1.length,0,255);
+        stroke(255,trailAlpha);
         line(trail1[i][0],trail1[i][1],trail1[i+1][0],trail1[i+1][1]);
-    }
-    if(myOperators[0].type==ADDER){
-        stroke(30,200,225);
-    }else{
-        stroke(255,0,0)
-    }
-    for(i=0;i<trail2.length-1;i++){
         line(trail2[i][0],trail2[i][1],trail2[i+1][0],trail2[i+1][1]);
+    }
+
+    for(i=0;i<trail2.length-1;i++){
+        trailAlpha = map(i,0,trail1.length,0,255);
+
+        if(myOperators[0].type==ADDER){
+            stroke(30,200,225,trailAlpha);
+        }else{
+            stroke(255,0,0,trailAlpha);
+        }
+
+        line(trail3[i][0],trail3[i][1],trail3[i+1][0],trail3[i+1][1]);
     }
 
 }
