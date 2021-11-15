@@ -281,6 +281,9 @@ class Operator {
 	}else if(myLevels[level].polar){
 		this.myInput1.magUpdate();
 		this.myInput2.argUpdate();
+	}else if(myLevels[level].unitCircle){
+		this.myInput1.argUpdate();
+		this.myInput2.argUpdate();
 	}else{
 		this.myInput1.update();
 		this.myInput2.update();

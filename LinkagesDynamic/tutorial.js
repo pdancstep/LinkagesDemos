@@ -30,7 +30,55 @@ var trailLimit = 100;
 function runTutorial() {
 
 
-        //overlays
+    //set scale
+    if(myLevels[level].customScale){
+      //error when updating global parameter?!!
+    }else{
+      //?
+    }
+
+
+
+    if(myLevels[level].radians){
+        //turn off cartesian coordinates...
+        supressCoords = true;
+        textSize(20);
+        noStroke();
+        fill(150);
+        for(i=0;i<8;i++){
+            ellipse(centerX+globalScale*cos(i*TWO_PI/8),centerY+globalScale*sin(i*TWO_PI/8),10,10)
+        }
+        text("0",centerX+1.1*globalScale,centerY);
+        text("𝝅/4",centerX+1.1*globalScale*cos(-TWO_PI/8),centerY+1.1*globalScale*sin(-TWO_PI/8));
+        text("𝝅/2",centerX,centerY+1.1*globalScale*sin(-TWO_PI/4));
+        text("3𝝅/4",centerX+1.1*globalScale*cos(-3*TWO_PI/8),centerY+1.1*globalScale*sin(-3*TWO_PI/8));
+        text("𝝅",centerX+1.1*globalScale*cos(PI),centerY);
+        text("5𝝅/4",centerX+1.1*globalScale*cos(-5*TWO_PI/8),centerY+1.1*globalScale*sin(-5*TWO_PI/8));
+        text("3𝝅/2",centerX,centerY+1.1*globalScale*sin(-3*PI/2));
+        text("7𝝅/4",centerX+1.1*globalScale*cos(-7*TWO_PI/8),centerY+1.1*globalScale*sin(-7*TWO_PI/8));
+    }else if(myLevels[level].degrees){
+        //turn off cartesian coordinates...
+        supressCoords = true;
+        textSize(20);
+        noStroke();
+        fill(150);
+        for(i=0;i<8;i++){
+            ellipse(centerX+globalScale*cos(i*TWO_PI/8),centerY+globalScale*sin(i*TWO_PI/8),10,10)
+        }
+        text("0°",centerX+1.1*globalScale,centerY);
+        text("45°",centerX+1.1*globalScale*cos(-TWO_PI/8),centerY+1.1*globalScale*sin(-TWO_PI/8));
+        text("90°",centerX,centerY+1.1*globalScale*sin(-TWO_PI/4));
+        text("135°",centerX+1.1*globalScale*cos(-3*TWO_PI/8),centerY+1.1*globalScale*sin(-3*TWO_PI/8));
+        text("180°",centerX+1.1*globalScale*cos(PI),centerY);
+        text("225°",centerX+1.1*globalScale*cos(-5*TWO_PI/8),centerY+1.1*globalScale*sin(-5*TWO_PI/8));
+        text("270°",centerX,centerY+1.1*globalScale*sin(-3*PI/2));
+        text("315°",centerX+1.1*globalScale*cos(-7*TWO_PI/8),centerY+1.1*globalScale*sin(-7*TWO_PI/8));
+    }else{
+        supressCoords = false;
+    }
+
+
+    //overlays
     if(myLevels[level].overlay){
         transformOverlay();
     }
@@ -39,12 +87,20 @@ function runTutorial() {
 
     //side panel for lessons
     fill(35);
+    noStroke();
     rect(1300,0,300,height);
 
     //Top level instructions...
     textAlign(CENTER,CENTER);
     fill(200);
     text(myLevels[level].instructions, 1325, 25, 250, 300);
+
+    //make wedges (should this be separate from "Unit Circle" designation?)
+    if(myLevels[level].unitCircle
+        &&myOperators.length==1
+        &&myOperators[0].type==MULTIPLIER){
+            makeWedges();
+    }
 
 
 
@@ -158,6 +214,58 @@ function runTutorial() {
     }
 }
 
+var input1Angle;
+var input2Angle;
+
+//center coordinates for angle comparing graphic, associated with .wedgeCompare
+var compareX = 1450;
+var compareY = 400;
+
+//note that wedgeCompare is only called WITHIN makeWedges...
+function makeWedges(){
+
+    input1Angle = atan2((axisToPixelY(myOperators[0].myInput1.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput1.real)-centerX))
+    input2Angle = atan2((axisToPixelY(myOperators[0].myInput2.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput2.real)-centerX))
+
+
+    noFill();
+    strokeWeight(20);
+    strokeCap(SQUARE);
+    stroke(255,100,0,100);
+    arc(centerX,centerY,globalScale/2,globalScale/2,input1Angle,0);
+    stroke(255,200,0,100);
+    arc(centerX,centerY,globalScale/3,globalScale/3,input2Angle,0);
+    stroke(255,0,0,100);
+    arc(centerX,centerY,2*globalScale/3,2*globalScale/3,input1Angle+input2Angle,0);
+
+    if(myLevels[level].wedgeCompare){
+        noFill();
+        stroke(200);
+        strokeWeight(1);
+        ellipse(compareX-75,compareY,100,100);
+        ellipse(compareX+75,compareY,100,100);
+
+        noStroke();
+        fill(200);
+        textSize(30);
+        text("=",compareX,compareY);
+
+
+        fill(255,100,0,100);
+        arc(compareX-75,compareY,100,100,input1Angle,0);
+        fill(255,200,0,100);
+        arc(compareX-75,compareY,100,100,input1Angle+input2Angle,input1Angle);
+        fill(255,0,0,100);
+        arc(compareX+75,compareY,100,100,input1Angle+input2Angle,0);
+
+    }
+
+}
+
+
+
+
+
 
 var bgAlpha;
 var hairlineAlpha;
@@ -234,7 +342,10 @@ function transformOverlay(){
 }
 
 
+
+
 var trailAlpha
+
 
 function makeTrails(){
 

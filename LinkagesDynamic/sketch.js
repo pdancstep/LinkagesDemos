@@ -18,7 +18,7 @@ const updateCycles = 3;
 const centerX = 650;
 const centerY = 450;
 //global scale (standard, 50px = 1 unit)
-const globalScale = 50;
+const globalScale = 300;
 
 //double tap reference (sketch level)
 var tappedOnce = false;
@@ -34,6 +34,9 @@ var holdLength = 700;
 var reversingOperator = false;
 
 var indicatorFlash = false;
+
+//turns off cartesian coordinates when focusing on polar coordinates...
+var supressCoords = false;
 
 function draw() {
     //manage double tap
@@ -89,10 +92,12 @@ function draw() {
     for (i=-20; i<20; i++){
         fill(150);
         noStroke();
-    	text(i, centerX+i*globalScale, centerY-16);
-    	text(-i+"i", centerX-20, centerY+i*globalScale);
     	ellipse(centerX+i*globalScale, centerY, 5, 5);
     	ellipse(centerX, centerY+i*globalScale, 5, 5);
+        if(!supressCoords){
+            text(i, centerX+i*globalScale, centerY-16);
+            text(-i+"i", centerX-20, centerY+i*globalScale);
+        }
     }
 
     //buttons
@@ -131,6 +136,8 @@ function draw() {
 
     //make tutorials run on top of this interactive canvas...
     runTutorial();
+
+
 }
 
 function printToPlot(){
@@ -170,6 +177,7 @@ function printToPlot(){
 	     height - 40*(i+1));
     }
 }
+
 
 function pixelToAxisX(coord) {
     return (coord - centerX) / globalScale;
