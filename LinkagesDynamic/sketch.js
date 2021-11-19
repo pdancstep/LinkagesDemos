@@ -18,7 +18,7 @@ const updateCycles = 3;
 const centerX = 650;
 const centerY = 450;
 //global scale (standard, 50px = 1 unit)
-const globalScale = 300;
+var globalScale = 50;
 
 //double tap reference (sketch level)
 var tappedOnce = false;
@@ -39,6 +39,7 @@ var indicatorFlash = false;
 var supressCoords = false;
 
 function draw() {
+
     //manage double tap
     if(tappedOnce){
 	if((millis()-currentTime)>doubleTapTimer){

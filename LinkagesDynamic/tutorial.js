@@ -32,9 +32,9 @@ function runTutorial() {
 
     //set scale
     if(myLevels[level].customScale){
-      //error when updating global parameter?!!
+      globalScale = myLevels[level].customScale;
     }else{
-      //?
+      globalScale = 50;
     }
 
 
