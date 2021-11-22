@@ -3,7 +3,7 @@
 var myLevels = [];
 
 //counter for incrementing through the tutorials...
-var level = 3;
+var level = 2;
 
 //variables for transformation overlays...
 //Anchor is where the mouse sets down
@@ -113,7 +113,7 @@ function runTutorial() {
 
 
 
-                for(i=0;i<20;i++){
+                for(i=0;i<30;i++){
                     if((abs(input1Radius-(i*globalScale))<2)
                         ||(abs(input2Radius-(i*globalScale))<2)){
                         stroke(255,100,0,200);
@@ -283,15 +283,21 @@ function runTutorial() {
 var input1Angle;
 var input2Angle;
 
-//center coordinates for angle comparing graphic, associated with .wedgeCompare
+
+
+//center coordinates for "wedgeCompare" graphic,
 var compareX = 1450;
 var compareY = 400;
+
+//
 
 //note that wedgeCompare is only called WITHIN makeWedges...
 function makeWedges(){
 
     input1Angle = atan2((axisToPixelY(myOperators[0].myInput1.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput1.real)-centerX))
     input2Angle = atan2((axisToPixelY(myOperators[0].myInput2.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput2.real)-centerX))
+
+
 
 
     noFill();
@@ -317,19 +323,41 @@ function makeWedges(){
         text("=",compareX,compareY);
 
 
+        textSize(20);
+
         fill(255,100,0,100);
         arc(compareX-75,compareY,100,100,input1Angle,0);
+
+        fill(255,100,0,175);
+        text(round(degrees(convertAngleForReadout(input1Angle)))+"°",compareX-40,compareY-75);
+
         fill(255,200,0,100);
         arc(compareX-75,compareY,100,100,input1Angle+input2Angle,input1Angle);
+
+        fill(255,200,0,175);
+        text(round(degrees(convertAngleForReadout(input2Angle)))+"°",compareX-110,compareY-75);
+
         fill(255,0,0,100);
         arc(compareX+75,compareY,100,100,input1Angle+input2Angle,0);
+
+        fill(255,0,0,175);
+        text(round(degrees(convertAngleForReadout(input1Angle+input2Angle)))+"°",compareX+75,compareY-75);
+
+        fill(255,175);
+        text("+",compareX-75,compareY-75)
 
     }
 
 }
 
 
-
+function convertAngleForReadout(angle) {
+    if(angle<=0){
+        return -angle;
+    }else if(angle>0){
+        return map(angle,0,PI,TWO_PI,PI);
+    }
+}
 
 
 

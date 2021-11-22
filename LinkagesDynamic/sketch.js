@@ -66,7 +66,7 @@ function draw() {
     background(indicator);
 
     //background grid
-    for (i=-20; i<20; i++){
+    for (i=-30; i<30; i++){
         strokeWeight(1);
         stroke(75);
         noFill();
@@ -90,7 +90,7 @@ function draw() {
     //coordinate data
     textSize(15);
     textAlign(CENTER,CENTER);
-    for (i=-20; i<20; i++){
+    for (i=-30; i<30; i++){
         fill(150);
         noStroke();
     	ellipse(centerX+i*globalScale, centerY, 5, 5);

@@ -32,6 +32,7 @@ myLevels[2] = {
 };
 
 myLevels[3] = {
+    customScale: 30,
 
     concentricCircles: true,
     instructions: "Place a multiplier on the board",
