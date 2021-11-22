@@ -21,7 +21,8 @@ myLevels[1] = {
 myLevels[2] = {
     customScale: 300,
     unitCircle: true,
-    wedgeCompare: true,
+    showWedges: true,
+    wedgeRO: true,
     degrees: true,
     instructions: "Place a multiplier on the board",
     explanation: "This multiplier is stuck on the unit circle. It is effectively and angle adder.",
@@ -32,9 +33,11 @@ myLevels[2] = {
 };
 
 myLevels[3] = {
-    customScale: 30,
 
     concentricCircles: true,
+    showWedges: true,
+    wedgeRO: true,
+
     instructions: "Place a multiplier on the board",
     explanation: "Note how the this multiplies the radii of circles (regardless of angle)",
     testComplete: function(){

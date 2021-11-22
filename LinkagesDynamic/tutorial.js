@@ -3,7 +3,7 @@
 var myLevels = [];
 
 //counter for incrementing through the tutorials...
-var level = 2;
+var level = 0;
 
 //variables for transformation overlays...
 //Anchor is where the mouse sets down
@@ -17,14 +17,15 @@ var offsetTheta;
 
 //special modes - FIX: move these into level javascript objects?
 
-//input trails
-var trail1 = [];
-var trail2 = [];
-//output trails
-var trail3 = [];
+//input tracers
+var tracer1 = [];
+var tracer2 = [];
+//output tracers
+var tracer3 = [];
 
-var trailLimit = 100;
+var tracerLimit = 100;
 
+//variables for measuring multiplier radii, booleans for nominal distances...
 var input1Radius;
 var input1OnCircle = false;
 var input2Radius;
@@ -45,7 +46,7 @@ function runTutorial() {
     }
 
 
-
+    //decorating the unit circle with angles
     if(myLevels[level].radians){
         //turn off cartesian coordinates...
         supressCoords = true;
@@ -85,22 +86,22 @@ function runTutorial() {
     }
 
 
-    //overlays
+    //semi-transparent translationg and scale/rotationg overlays
     if(myLevels[level].overlay){
         transformOverlay();
     }
 
+    //concentric circles that light up when multiplier nodes touch them...
     if(myLevels[level].concentricCircles){
         if(myOperators.length==1
             &&myOperators[0].type==MULTIPLIER){
 
+                //measure relevant radii
                 input1Radius = sqrt(dist(axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary),centerX,centerY));
                 input2Radius = sqrt(dist(axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary),centerX,centerY));
                 outputRadius = sqrt(dist(axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary),centerX,centerY));
 
-
-                noFill();
-
+                //determine if inputs are on a nominal circle
                 input1OnCircle = input2OnCircle = false;
                 for(i=0;i<20;i++){
                     if(abs(input1Radius-(i*globalScale))<2){
@@ -111,8 +112,9 @@ function runTutorial() {
                     }
                 }
 
+                noFill();
 
-
+                //draw circles...
                 for(i=0;i<30;i++){
                     if((abs(input1Radius-(i*globalScale))<2)
                         ||(abs(input2Radius-(i*globalScale))<2)){
@@ -132,7 +134,7 @@ function runTutorial() {
 
 
 
-
+                //show circle radii if close to a nominal value
                 noStroke();
                 textSize(15);
                 fill(0);
@@ -161,17 +163,22 @@ function runTutorial() {
     text(myLevels[level].instructions, 1325, 25, 250, 300);
 
     //make wedges (should this be separate from "Unit Circle" designation?)
-    if(myLevels[level].unitCircle
+    if(myLevels[level].showWedges
         &&myOperators.length==1
         &&myOperators[0].type==MULTIPLIER){
             makeWedges();
     }
 
+    if(myLevels[level].wedgeRO
+        &&myOperators.length==1
+        &&myOperators[0].type==MULTIPLIER){
+            compareWedges();
+    }
 
 
-    //drawing trails...
+    //drawing tracers...
     if(myOperators.length==1&&myLevels[level].tracers){
-        makeTrails();
+        makeTracers();
     }
 
     //places a dot on the board
@@ -291,17 +298,15 @@ var compareY = 400;
 
 //
 
-//note that wedgeCompare is only called WITHIN makeWedges...
+//make arcs that measure the angles of the multiplier inputs...
 function makeWedges(){
 
-    input1Angle = atan2((axisToPixelY(myOperators[0].myInput1.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput1.real)-centerX))
-    input2Angle = atan2((axisToPixelY(myOperators[0].myInput2.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput2.real)-centerX))
-
-
+    input1Angle = atan2((axisToPixelY(myOperators[0].myInput1.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput1.real)-centerX));
+    input2Angle = atan2((axisToPixelY(myOperators[0].myInput2.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput2.real)-centerX));
 
 
     noFill();
-    strokeWeight(20);
+    strokeWeight(globalScale/15);
     strokeCap(SQUARE);
     stroke(255,100,0,100);
     arc(centerX,centerY,globalScale/2,globalScale/2,input1Angle,0);
@@ -310,45 +315,51 @@ function makeWedges(){
     stroke(255,0,0,100);
     arc(centerX,centerY,2*globalScale/3,2*globalScale/3,input1Angle+input2Angle,0);
 
-    if(myLevels[level].wedgeCompare){
-        noFill();
-        stroke(200);
-        strokeWeight(1);
-        ellipse(compareX-75,compareY,100,100);
-        ellipse(compareX+75,compareY,100,100);
-
-        noStroke();
-        fill(200);
-        textSize(30);
-        text("=",compareX,compareY);
-
-
-        textSize(20);
-
-        fill(255,100,0,100);
-        arc(compareX-75,compareY,100,100,input1Angle,0);
-
-        fill(255,100,0,175);
-        text(round(degrees(convertAngleForReadout(input1Angle)))+"°",compareX-40,compareY-75);
-
-        fill(255,200,0,100);
-        arc(compareX-75,compareY,100,100,input1Angle+input2Angle,input1Angle);
-
-        fill(255,200,0,175);
-        text(round(degrees(convertAngleForReadout(input2Angle)))+"°",compareX-110,compareY-75);
-
-        fill(255,0,0,100);
-        arc(compareX+75,compareY,100,100,input1Angle+input2Angle,0);
-
-        fill(255,0,0,175);
-        text(round(degrees(convertAngleForReadout(input1Angle+input2Angle)))+"°",compareX+75,compareY-75);
-
-        fill(255,175);
-        text("+",compareX-75,compareY-75)
-
-    }
-
 }
+
+//a visual readout that shows how angles add...
+function compareWedges(){
+
+    input1Angle = atan2((axisToPixelY(myOperators[0].myInput1.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput1.real)-centerX));
+    input2Angle = atan2((axisToPixelY(myOperators[0].myInput2.imaginary)-centerY),(axisToPixelX(myOperators[0].myInput2.real)-centerX));
+
+    noFill();
+    stroke(200);
+    strokeWeight(1);
+    ellipse(compareX-75,compareY,100,100);
+    ellipse(compareX+75,compareY,100,100);
+
+    noStroke();
+    fill(200);
+    textSize(30);
+    text("=",compareX,compareY);
+
+
+    textSize(20);
+
+    fill(255,100,0,100);
+    arc(compareX-75,compareY,100,100,input1Angle,0);
+
+    fill(255,100,0,175);
+    text(round(degrees(convertAngleForReadout(input1Angle)))+"°",compareX-40,compareY-75);
+
+    fill(255,200,0,100);
+    arc(compareX-75,compareY,100,100,input1Angle+input2Angle,input1Angle);
+
+    fill(255,200,0,175);
+    text(round(degrees(convertAngleForReadout(input2Angle)))+"°",compareX-110,compareY-75);
+
+    fill(255,0,0,100);
+    arc(compareX+75,compareY,100,100,input1Angle+input2Angle,0);
+
+    fill(255,0,0,175);
+    text(round(degrees(convertAngleForReadout(input1Angle+input2Angle)))+"°",compareX+75,compareY-75);
+
+    fill(255,175);
+    text("+",compareX-75,compareY-75)
+}
+
+
 
 
 function convertAngleForReadout(angle) {
@@ -438,45 +449,45 @@ function transformOverlay(){
 
 
 
-var trailAlpha
+var tracerAlpha
 
 
-function makeTrails(){
+function makeTracers(){
 
-    trail1.push([axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary)]);
-    if(trail1.length>trailLimit){
-        trail1.splice(0,1);
+    tracer1.push([axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary)]);
+    if(tracer1.length>tracerLimit){
+        tracer1.splice(0,1);
     }
-    trail2.push([axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary)]);
-    if(trail2.length>trailLimit){
-        trail2.splice(0,1);
+    tracer2.push([axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary)]);
+    if(tracer2.length>tracerLimit){
+        tracer2.splice(0,1);
     }
 
-    trail3.push([axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary)]);
-    if(trail3.length>trailLimit){
-        trail3.splice(0,1);
+    tracer3.push([axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary)]);
+    if(tracer3.length>tracerLimit){
+        tracer3.splice(0,1);
     }
 
     strokeWeight(3);
 
     strokeCap(SQUARE);
-    for(i=0;i<trail1.length-1;i++){
-        trailAlpha = map(i,0,trail1.length,0,255);
-        stroke(255,trailAlpha);
-        line(trail1[i][0],trail1[i][1],trail1[i+1][0],trail1[i+1][1]);
-        line(trail2[i][0],trail2[i][1],trail2[i+1][0],trail2[i+1][1]);
+    for(i=0;i<tracer1.length-1;i++){
+        tracerAlpha = map(i,0,tracer1.length,0,255);
+        stroke(255,tracerAlpha);
+        line(tracer1[i][0],tracer1[i][1],tracer1[i+1][0],tracer1[i+1][1]);
+        line(tracer2[i][0],tracer2[i][1],tracer2[i+1][0],tracer2[i+1][1]);
     }
 
-    for(i=0;i<trail2.length-1;i++){
-        trailAlpha = map(i,0,trail1.length,0,255);
+    for(i=0;i<tracer2.length-1;i++){
+        tracerAlpha = map(i,0,tracer1.length,0,255);
 
         if(myOperators[0].type==ADDER){
-            stroke(30,200,225,trailAlpha);
+            stroke(30,200,225,tracerAlpha);
         }else{
-            stroke(255,0,0,trailAlpha);
+            stroke(255,0,0,tracerAlpha);
         }
 
-        line(trail3[i][0],trail3[i][1],trail3[i+1][0],trail3[i+1][1]);
+        line(tracer3[i][0],tracer3[i][1],tracer3[i+1][0],tracer3[i+1][1]);
     }
 
 }
