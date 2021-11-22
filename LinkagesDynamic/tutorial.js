@@ -3,7 +3,7 @@
 var myLevels = [];
 
 //counter for incrementing through the tutorials...
-var level = 0;
+var level = 3;
 
 //variables for transformation overlays...
 //Anchor is where the mouse sets down
@@ -24,6 +24,13 @@ var trail2 = [];
 var trail3 = [];
 
 var trailLimit = 100;
+
+var input1Radius;
+var input1OnCircle = false;
+var input2Radius;
+var input2OnCircle = false;
+var outputRadius;
+
 
 //Functions for running tutorial levels...
 
@@ -83,7 +90,65 @@ function runTutorial() {
         transformOverlay();
     }
 
+    if(myLevels[level].concentricCircles){
+        if(myOperators.length==1
+            &&myOperators[0].type==MULTIPLIER){
 
+                input1Radius = sqrt(dist(axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary),centerX,centerY));
+                input2Radius = sqrt(dist(axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary),centerX,centerY));
+                outputRadius = sqrt(dist(axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary),centerX,centerY)*dist(axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary),centerX,centerY));
+
+
+                noFill();
+
+                input1OnCircle = input2OnCircle = false;
+                for(i=0;i<20;i++){
+                    if(abs(input1Radius-(i*globalScale))<2){
+                        input1OnCircle = true;
+                    }
+                    if(abs(input2Radius-(i*globalScale))<2){
+                        input2OnCircle = true;
+                    }
+                }
+
+
+
+                for(i=0;i<20;i++){
+                    if((abs(input1Radius-(i*globalScale))<2)
+                        ||(abs(input2Radius-(i*globalScale))<2)){
+                        stroke(255,100,0,200);
+                        strokeWeight(3);
+                    }else if(abs(outputRadius-(i*globalScale))<10
+                        &&input1OnCircle
+                        &&input2OnCircle){
+                            stroke(255,0,0,200);
+                            strokeWeight(3);
+                    }else{
+                        stroke(255,100,0,100);
+                        strokeWeight(1);
+                    }
+                    ellipse(centerX,centerY,2*i*globalScale,2*i*globalScale);
+                }
+
+
+
+
+                noStroke();
+                textSize(15);
+                fill(0);
+
+                if(input1OnCircle){
+                    text(round(input1Radius/globalScale),axisToPixelX(myOperators[0].myInput1.real),axisToPixelY(myOperators[0].myInput1.imaginary));
+                }
+                if(input2OnCircle){
+                    text(round(input2Radius/globalScale),axisToPixelX(myOperators[0].myInput2.real),axisToPixelY(myOperators[0].myInput2.imaginary));
+                }
+                if(input1OnCircle&&input2OnCircle){
+                    text(round(outputRadius/globalScale),axisToPixelX(myOperators[0].myOutput.real),axisToPixelY(myOperators[0].myOutput.imaginary));
+                }
+
+        }
+    }
 
     //side panel for lessons
     fill(35);
@@ -111,6 +176,7 @@ function runTutorial() {
 
     //places a dot on the board
     if(myLevels[level].targetDot){
+        mouseRadius = sqrt((dist(mouseX,mouseY,centerX,centerY)/globalScale)*(dist(mouseX,mouseY,centerX,centerY)/globalScale));
         fill(0,255,0,100);
         ellipse(axisToPixelX(myLevels[level].outputTargetX),
 		axisToPixelY(myLevels[level].outputTargetY),
