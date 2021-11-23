@@ -65,39 +65,46 @@ function draw() {
     
     background(indicator);
 
-    //background grid
-    for (i=-30; i<30; i++){
-        strokeWeight(1);
-        stroke(75);
+
+    if(!myLevels[level].coordinatesOff){
+        //background grid
+        for (i=-30; i<30; i++){
+            strokeWeight(1);
+            stroke(75);
+            noFill();
+            line(centerX+i*globalScale,0,centerX+i*globalScale,height);
+            line(0,centerY+i*globalScale,width,centerY+i*globalScale);
+        }
+    
+        //axes,unit circle
         noFill();
-        line(centerX+i*globalScale,0,centerX+i*globalScale,height);
-        line(0,centerY+i*globalScale,width,centerY+i*globalScale);
+        stroke(200);
+        strokeWeight(1);
+        line(0,centerY,width,centerY);
+        line(centerX,0,centerX,height);
+        ellipse(centerX,centerY,2*globalScale,2*globalScale); // unit circle
     }
     
-    //axes,unit circle
-    noFill();
-    stroke(200);
-    strokeWeight(1);
-    line(0,centerY,width,centerY);
-    line(centerX,0,centerX,height);
-    ellipse(centerX,centerY,2*globalScale,2*globalScale); // unit circle
     
+
     //draw operators
     for (const oper of myOperators) {
 	oper.display();
     }
     
     //coordinate data
-    textSize(15);
-    textAlign(CENTER,CENTER);
-    for (i=-30; i<30; i++){
-        fill(150);
-        noStroke();
-    	ellipse(centerX+i*globalScale, centerY, 5, 5);
-    	ellipse(centerX, centerY+i*globalScale, 5, 5);
-        if(!supressCoords){
-            text(i, centerX+i*globalScale, centerY-16);
-            text(-i+"i", centerX-20, centerY+i*globalScale);
+    if(!myLevels[level].coordinatesOff){
+        textSize(15);
+        textAlign(CENTER,CENTER);
+        for (i=-30; i<30; i++){
+            fill(150);
+            noStroke();
+        	ellipse(centerX+i*globalScale, centerY, 5, 5);
+        	ellipse(centerX, centerY+i*globalScale, 5, 5);
+            if(!supressCoords){
+                text(i, centerX+i*globalScale, centerY-16);
+                text(-i+"i", centerX-20, centerY+i*globalScale);
+            }
         }
     }
 

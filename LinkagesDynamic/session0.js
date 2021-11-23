@@ -1,6 +1,7 @@
 myLevels[0] = {
 
-    operatorAlpha: 100,
+    coordinatesOff: true,
+    operatorOff: true,
 
     instructions: "Put an operator on the board",
 
