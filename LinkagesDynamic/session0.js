@@ -1,6 +1,10 @@
 myLevels[0] = {
 
-    instructions: "Free Play",
+    parallelogram: true,
+    similarTriangles1: true,
+
+
+    instructions: "Put an operator on the board",
 
     testComplete: function(){
 	return true
@@ -9,9 +13,9 @@ myLevels[0] = {
 
 
 myLevels[1] = {
-    tracers: true,
-    instructions: "Tracers",
-    
+    parallelogram: true,
+    instructions: "Put an operator on the board",
+
     testComplete: function(){
     return true
     }
@@ -36,7 +40,6 @@ myLevels[3] = {
 
     concentricCircles: true,
     showWedges: true,
-    wedgeRO: true,
 
     instructions: "Place a multiplier on the board",
     explanation: "Note how the this multiplies the radii of circles (regardless of angle)",

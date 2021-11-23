@@ -152,6 +152,70 @@ function runTutorial() {
         }
     }
 
+    //fill parallelogram in adder
+    if(myLevels[level].parallelogram){
+        if(myOperators.length==1
+            &&myOperators[0].type==ADDER){
+                fill(0,200,225,150);
+                beginShape();
+                    vertex(centerX,centerY);
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                    vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                endShape(CLOSE);
+
+        }
+    }
+
+    //fill similar triangles in multiplier
+    if(myLevels[level].similarTriangles1){
+        if(myOperators.length==1
+            &&myOperators[0].type==MULTIPLIER){
+                
+                fill(255,100,0,100);
+                
+                beginShape();
+                    vertex(centerX,centerY);
+                    vertex(centerX+globalScale,centerY);
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                endShape(CLOSE);
+
+                fill(255,0,0,100);
+
+                beginShape();
+                    vertex(centerX,centerY);
+                    vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                endShape(CLOSE);
+
+        }
+    }
+
+
+    if(myLevels[level].similarTriangles2){
+        if(myOperators.length==1
+            &&myOperators[0].type==MULTIPLIER){
+                
+                fill(255,100,0,100);
+                
+                beginShape();
+                    vertex(centerX,centerY);
+                    vertex(centerX+globalScale,centerY);
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                endShape(CLOSE);
+
+                fill(255,0,0,100);
+
+                beginShape();
+                    vertex(centerX,centerY);
+                    vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                endShape(CLOSE);
+
+        }
+    }
+
+
     //side panel for lessons
     fill(35);
     noStroke();
