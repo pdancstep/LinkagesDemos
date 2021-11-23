@@ -216,6 +216,9 @@ function runTutorial() {
     }
 
 
+
+
+
     //side panel for lessons
     fill(35);
     noStroke();
@@ -238,6 +241,69 @@ function runTutorial() {
         &&myOperators[0].type==MULTIPLIER){
             compareWedges();
     }
+
+
+
+    if(myLevels[level].adderProjection){
+        if(myOperators.length==1
+            &&myOperators[0].type==ADDER){
+
+            strokeWeight(2);
+
+            //vertical projections...
+            noStroke();
+            fill(180,110,225);
+            ellipse(myOperators[0].myInput1.getRealPx(),centerY,15,15);
+            ellipse(myOperators[0].myInput2.getRealPx(),centerY,15,15);
+
+            fill(150,0,255);
+            ellipse(myOperators[0].myOutput.getRealPx(),centerY,15,15);
+
+            noFill();
+            stroke(180,110,225);
+            line(myOperators[0].myInput1.getRealPx(),myOperators[0].myInput1.getImaginaryPx(),myOperators[0].myInput1.getRealPx(),centerY);
+            line(myOperators[0].myInput2.getRealPx(),myOperators[0].myInput2.getImaginaryPx(),myOperators[0].myInput2.getRealPx(),centerY);
+
+            stroke(150,0,255);
+            line(myOperators[0].myOutput.getRealPx(),myOperators[0].myOutput.getImaginaryPx(),myOperators[0].myOutput.getRealPx(),centerY);
+
+
+            //horizontal projections...
+            noStroke();
+            fill(160,200,150);
+            ellipse(centerX,myOperators[0].myInput1.getImaginaryPx(),15,15);
+            ellipse(centerX,myOperators[0].myInput2.getImaginaryPx(),15,15);
+
+            fill(100,200,100);
+            ellipse(centerX,myOperators[0].myOutput.getImaginaryPx(),10,10);
+
+            noFill();
+            stroke(160,200,150);
+            line(myOperators[0].myInput1.getRealPx(),myOperators[0].myInput1.getImaginaryPx(),centerX,myOperators[0].myInput1.getImaginaryPx());
+            line(myOperators[0].myInput2.getRealPx(),myOperators[0].myInput2.getImaginaryPx(),centerX,myOperators[0].myInput2.getImaginaryPx());
+
+            stroke(100,200,100);
+            line(myOperators[0].myOutput.getRealPx(),myOperators[0].myOutput.getImaginaryPx(),centerX,myOperators[0].myOutput.getImaginaryPx());
+
+            //DRO
+            textAlign(RIGHT,CENTER);
+            noStroke();
+            fill(180,110,225);
+            text(nfc(myOperators[0].myInput1.getReal(),1)+"+"+nfc(myOperators[0].myInput2.getReal(),1)+"=",1500,300);
+            fill(160,200,150);
+            text(nfc(myOperators[0].myInput1.getImaginary(),1)+"+"+nfc(myOperators[0].myInput2.getImaginary(),1)+"=",1500,350);
+
+
+            textAlign(LEFT,CENTER);
+            fill(150,0,255);
+            text(nfc(myOperators[0].myOutput.getReal(),1),1500,300);
+            fill(100,200,100);
+            text(nfc(myOperators[0].myOutput.getImaginary(),1),1500,350);
+
+        }
+    }
+
+
 
 
     //drawing tracers...
@@ -329,6 +395,7 @@ function runTutorial() {
 
     //end state for completed level, appearance of "next" button    
     if (myLevels[level].testComplete()) {
+        textAlign(CENTER,CENTER);
         if (myLevels[level].explanation) {
             fill(200);
             noStroke();

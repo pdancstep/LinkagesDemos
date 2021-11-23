@@ -1,7 +1,6 @@
 myLevels[0] = {
 
-    parallelogram: true,
-    similarTriangles1: true,
+    adderProjection: true,
 
 
     instructions: "Put an operator on the board",
