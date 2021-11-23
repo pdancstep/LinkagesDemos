@@ -203,6 +203,24 @@ function axisToPixelY(coord) {
     return centerY - (coord * globalScale);
 }
 
+function keyPressed(){
+    //n for 'next'
+    if((keyCode === 78)&&(level!=(myLevels.length-1))){
+        level++;
+    }
+    
+    //p for 'previous'
+    if((keyCode === 80)&&(level!=0)){
+        level--;
+    }
+}
+    
+
+
+
+
+
+
 function touchStarted() {
 
     if (reversingOperator) {
