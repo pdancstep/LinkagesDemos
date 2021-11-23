@@ -520,7 +520,17 @@ class Operator {
 	    if (this.type==ADDER) {      
 		// parallelogram      
 		noFill();
-		stroke(30,200,225);
+
+		
+		if(myLevels[level].operatorOff){
+			stroke(30,200,225,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(30,200,225,myLevels[level].operatorAlpha);
+		}else{
+			stroke(30,200,225);
+		}
+		
+
 		strokeWeight(1);
 		beginShape();
 		vertex(centerX,centerY);
@@ -540,10 +550,31 @@ class Operator {
 		// lines
 		noFill();
 		strokeWeight(1);
-		stroke(255,0,0);
+
+		
+
+		if(myLevels[level].operatorOff){
+			stroke(255,0,0,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(255,0,0,myLevels[level].operatorAlpha);
+		}else{
+			stroke(255,0,0);
+		}
+		
+
 		line(centerX, centerY,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
-		stroke(255,100,0);
+
+		if(myLevels[level].operatorOff){
+			stroke(255,100,0,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(255,100,0,myLevels[level].operatorAlpha);
+		}else{
+			stroke(255,100,0);
+		}
+
+		
+
 		line(centerX, centerY,
 		     this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());
 		line(centerX, centerY,
@@ -561,7 +592,18 @@ class Operator {
 	}else{ // display for collapsed operator...
 	    if (this.type==ADDER) {
 		noFill();
-		stroke(30,200,225);
+
+		
+		if(myLevels[level].operatorOff){
+			stroke(30,200,225,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(30,200,225,myLevels[level].operatorAlpha);
+		}else{
+			stroke(30,200,225);
+		}
+		
+
+
 		strokeWeight(1);
 		// only one line in a doubler/halver
 		line(centerX, centerY,
@@ -579,11 +621,29 @@ class Operator {
 	    }else if (this.type==MULTIPLIER) {
 		// lines for square and root
 		noFill();
-		stroke(255,0,0);
+
+		
+		if(myLevels[level].operatorOff){
+			stroke(255,0,0,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(255,0,0,myLevels[level].operatorAlpha);
+		}else{
+			stroke(255,0,0);
+		}
+		
+
 		strokeWeight(1);
 		line(centerX, centerY,
 		     this.myOutput.getRealPx(), this.myOutput.getImaginaryPx());
-		stroke(255,100,0);
+
+		if(myLevels[level].operatorOff){
+			stroke(255,100,0,0);
+		}else if(myLevels[level].operatorAlpha){
+			stroke(255,100,0,myLevels[level].operatorAlpha);
+		}else{
+			stroke(255,100,0);
+		}
+		
 		if (this.mode==COLLAPSED || this.mode==REVCOLLAPSED) {
 		    line(centerX, centerY,
 			 this.myInput1.getRealPx(), this.myInput1.getImaginaryPx());

@@ -168,6 +168,7 @@ function runTutorial() {
     }
 
     //fill similar triangles in multiplier
+
     if(myLevels[level].similarTriangles1){
         if(myOperators.length==1
             &&myOperators[0].type==MULTIPLIER){
@@ -177,7 +178,7 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(centerX+globalScale,centerY);
-                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
                 endShape(CLOSE);
 
                 fill(255,0,0,100);
@@ -185,11 +186,13 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
-                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
                 endShape(CLOSE);
 
         }
     }
+
+
 
 
     if(myLevels[level].similarTriangles2){
@@ -201,7 +204,7 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(centerX+globalScale,centerY);
-                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
                 endShape(CLOSE);
 
                 fill(255,0,0,100);
@@ -209,7 +212,7 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
-                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
                 endShape(CLOSE);
 
         }
@@ -275,7 +278,7 @@ function runTutorial() {
             ellipse(centerX,myOperators[0].myInput2.getImaginaryPx(),15,15);
 
             fill(100,200,100);
-            ellipse(centerX,myOperators[0].myOutput.getImaginaryPx(),10,10);
+            ellipse(centerX,myOperators[0].myOutput.getImaginaryPx(),15,15);
 
             noFill();
             stroke(160,200,150);

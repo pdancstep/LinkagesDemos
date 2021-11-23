@@ -1,7 +1,6 @@
 myLevels[0] = {
 
-    adderProjection: true,
-
+    operatorAlpha: 100,
 
     instructions: "Put an operator on the board",
 
@@ -13,6 +12,7 @@ myLevels[0] = {
 
 myLevels[1] = {
     parallelogram: true,
+    similarTriangles1: true,
     instructions: "Put an operator on the board",
 
     testComplete: function(){
