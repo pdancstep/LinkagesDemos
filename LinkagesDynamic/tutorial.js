@@ -169,6 +169,7 @@ function runTutorial() {
 
     //fill similar triangles in multiplier
 
+
     if(myLevels[level].similarTriangles1){
         if(myOperators.length==1
             &&myOperators[0].type==MULTIPLIER){
@@ -178,7 +179,7 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(centerX+globalScale,centerY);
-                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
                 endShape(CLOSE);
 
                 fill(255,0,0,100);
@@ -186,38 +187,39 @@ function runTutorial() {
                 beginShape();
                     vertex(centerX,centerY);
                     vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
-                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
                 endShape(CLOSE);
 
         }
     }
-
-
 
 
     if(myLevels[level].similarTriangles2){
         if(myOperators.length==1
             &&myOperators[0].type==MULTIPLIER){
-                
+
                 fill(255,100,0,100);
-                
-                beginShape();
-                    vertex(centerX,centerY);
-                    vertex(centerX+globalScale,centerY);
-                    vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
-                endShape(CLOSE);
 
-                fill(255,0,0,100);
+                if(myOperators[0].myInput1.dragging){
+                        
+                        beginShape();
+                            vertex(centerX,centerY);
+                            vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
+                            vertex(myOperators[0].myInput1.getRealPx(), myOperators[0].myInput1.getImaginaryPx());
+                        endShape(CLOSE);
 
-                beginShape();
-                    vertex(centerX,centerY);
-                    vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
-                    vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
-                endShape(CLOSE);
+                }else if(myOperators[0].myInput2.dragging){
+
+                    beginShape();
+                        vertex(centerX,centerY);
+                        vertex(myOperators[0].myOutput.getRealPx(), myOperators[0].myOutput.getImaginaryPx());
+                        vertex(myOperators[0].myInput2.getRealPx(), myOperators[0].myInput2.getImaginaryPx());
+                    endShape(CLOSE);
+
+                }
 
         }
     }
-
 
 
 

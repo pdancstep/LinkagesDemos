@@ -109,7 +109,7 @@ myLevels[8] = {
     similarTriangles1: true,
 
     instructions: "Filled operators",
-    explanation: "This shows some options for emphasizing the GEOMETRY of the operators. The adder's parallelogram is filled in and multiplier is decorated with two similar triangles.\n\nNote that there are two ways to decorate the multiplier with triangles. Go to next level to see the other.",
+    explanation: "This shows some options for emphasizing the GEOMETRY of the operators. The adder's parallelogram is filled in and multiplier is decorated with two similar triangles.",
 
     testComplete: function(){
     return true
@@ -122,7 +122,7 @@ myLevels[9] = {
     similarTriangles2: true,
 
     instructions: "Filled operators 2",
-    explanation: "Observe the difference in the multiplier between this level and the previous",
+    explanation: "Multiplier chooses a similar triangle for whichever input is being adjusted.",
 
     testComplete: function(){
     return true
