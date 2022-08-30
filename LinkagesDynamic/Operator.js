@@ -1,6 +1,7 @@
 // operator type
 const ADDER = 0;
 const MULTIPLIER = 1;
+const COMPOSITE = 3;
 
 // operator mode
 const DEFAULT = 0;
@@ -39,6 +40,8 @@ class Operator {
 	// index in myOperators. used for convenience when checking if a
 	// search for free nodes has visited this operator before
 	this.myindex = registerOperator(this);
+
+	this.hidden = false;
     }
 
     // returns the dependent node based on this operator's current mode
@@ -62,6 +65,8 @@ class Operator {
 
     //checks each of its inputs to see if the mouse is currently hovering over
     checkMouseover() {
+	if (this.hidden) { return false; }
+	
 	return (this.myInput1.checkMouseover() ||
 		this.myInput2.checkMouseover() ||
 		this.myOutput.checkMouseover());
@@ -69,6 +74,9 @@ class Operator {
 
     //checks to see if mouse is over any free nodes
     notifyClick() {
+	// can't click on a hidden operator
+	if (this.hidden) { return false; }
+	
 	switch (this.mode) {
 	case DEFAULT:
 	    this.dragging
@@ -502,6 +510,8 @@ class Operator {
 
     // display all the pieces of this relation
     display() {
+	if (this.hidden) { return; }
+	
 	if (this.mode==DEFAULT || this.mode==REVERSE1 || this.mode==REVERSE2) {
 	    // display for uncollapsed operator...
 	    
